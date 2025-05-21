@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gears - Grow a Garden Price History</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { background: linear-gradient(135deg, #b6e388 0%, #6dc47c 100%); }
+        .gears-container { max-width: 900px; margin: 0 auto; padding: 3rem 1rem; }
+        .gears-title { font-family: 'Luckiest Guy', cursive; font-size: 2.5rem; color: #2e5d34; margin-bottom: 2rem; text-align: center; }
+        .gear-list { display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; }
+        .gear-card { background: #fff; border-radius: 24px; box-shadow: 0 4px 16px #0002; padding: 2rem 1.5rem; display: flex; flex-direction: column; align-items: center; width: 260px; transition: transform 0.2s, box-shadow 0.2s; text-decoration: none; color: #2e5d34; }
+        .gear-card:hover { transform: translateY(-6px) scale(1.04); box-shadow: 0 8px 32px #0003; }
+        .gear-card img { width: 90px; height: 90px; object-fit: contain; margin-bottom: 1rem; border-radius: 16px; background: #f7e7d7; }
+        .gear-card .gear-name { font-family: 'Luckiest Guy', cursive; font-size: 1.4rem; margin-bottom: 0.5rem; }
+        .gear-card .gear-status { font-size: 1rem; color: #a86c2c; margin-bottom: 1rem; }
+        .gear-card .gear-link { display: inline-block; margin-top: 1rem; padding: 0.5rem 1.2rem; background: #b97fff; color: #fff; border-radius: 12px; font-weight: 600; text-decoration: none; transition: background 0.2s; }
+        .gear-card .gear-link:hover { background: #a86c2c; }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-btn" style="position:absolute;left:32px;top:32px;z-index:10;text-decoration:none;background:#b97fff;color:#fff;padding:0.7em 1.5em;border-radius:12px;font-weight:600;box-shadow:0 2px 8px #0002;transition:background 0.2s;">← Back to Home</a>
+    <div class="gears-container">
+        <div class="gears-title">Gears</div>
+        <div class="gear-list">
+            <a class="gear-card" href="choc-sprinkler.html">
+                <img src="assets/Sprinklerpage.png" alt="Choc Sprinkler">
+                <div class="gear-name">Choc Sprinkler</div>
+                <div class="gear-status">Unobtainable</div>
+                <div class="gear-link">View Details</div>
+            </a>
+        </div>
+    </div>
+</body>
+</html> 

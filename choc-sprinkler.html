@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choc Sprinkler - Grow a Garden Price History</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0"></script>
+    <style>
+        body { background: #a86c2c; overflow-x: hidden; }
+        .sprinkler-bg-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; opacity: 0.5; }
+        .sprinkler-detail-container { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 3rem; background: rgba(168, 108, 44, 0.1); }
+        .sprinkler-icon { width: 110px; height: 110px; border-radius: 24px; box-shadow: 0 4px 16px #0005; background: #fff3; margin: 2rem 0 1rem 0; object-fit: contain; }
+        .sprinkler-title { font-family: 'Luckiest Guy', cursive; font-size: 2.2rem; color: #fffbe7; text-shadow: 2px 2px 0 #7c4a1e, 0 4px 12px #0008; margin-bottom: 0.5rem; }
+        .sprinkler-stats { display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; margin-bottom: 2rem; }
+        .stat-block { background: #fff8; border-radius: 16px; box-shadow: 0 2px 8px #0002; padding: 1.2rem 2rem; min-width: 140px; text-align: center; }
+        .stat-label { font-size: 1rem; color: #a86c2c; margin-bottom: 0.3rem; }
+        .stat-value { font-size: 1.5rem; font-weight: 700; color: #b97fff; }
+        .trend-up { color: #4caf50; display: flex; align-items: center; justify-content: center; gap: 0.3em; }
+        .trend-arrow { font-size: 1.2em; }
+        .trend-down { color: #e53935; }
+        .sprinkler-graph-container { 
+            width: 98vw; 
+            max-width: 700px; 
+            background: #fff8; 
+            border-radius: 24px; 
+            box-shadow: 0 4px 16px #0003; 
+            padding: 2rem 1rem 3.5rem 1rem; /* Extra bottom padding */
+            margin-bottom: 2rem;
+            height: 400px; /* Shorter height */
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        .sprinkler-graph-container canvas {
+            margin-top: 10px; /* Move graph up a bit */
+        }
+        .chart-container {
+            height: 450px; /* Increased to match container */
+            margin-top: 1rem;
+        }
+        .chart-filters { display: flex; gap: 1rem; justify-content: flex-end; margin-bottom: 1rem; }
+        .chart-filter-btn { background: #b97fff; color: #fff; border: none; border-radius: 8px; padding: 0.5rem 1.2rem; font-weight: 600; cursor: pointer; transition: background 0.2s; font-size: 1rem; }
+        .chart-filter-btn.active, .chart-filter-btn:hover { background: #a86c2c; }
+        .accordion { width: 98vw; max-width: 700px; margin: 0 auto 2rem auto; background: #fff8; border-radius: 20px; box-shadow: 0 2px 8px #0002; overflow: hidden; }
+        .accordion-header { cursor: pointer; padding: 1.2rem 2rem; font-size: 1.2rem; font-weight: 600; background: #b97fff; color: #fff; border: none; outline: none; transition: background 0.2s; }
+        .accordion-header:hover { background: #a86c2c; }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; background: #fff8; padding: 0 2rem; }
+        .accordion-content.open { padding: 1.5rem 2rem; max-height: 600px; }
+        .section-title { font-family: 'Luckiest Guy', cursive; font-size: 1.3rem; color: #b97fff; margin: 1.2rem 0 0.5rem 0; }
+        .section-text { font-size: 1.05rem; color: #2e5d34; margin-bottom: 1rem; }
+        @media (max-width: 700px) {
+            .sprinkler-graph-container, .accordion { width: 99vw; max-width: 99vw; }
+            .sprinkler-stats { gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <a href="gears.html" class="back-btn" style="position:absolute;left:32px;top:32px;z-index:10;text-decoration:none;background:#b97fff;color:#fff;padding:0.7em 1.5em;border-radius:12px;font-weight:600;box-shadow:0 2px 8px #0002;transition:background 0.2s;">← Back to Gears</a>
+    <canvas class="sprinkler-bg-canvas" id="sprinkler-bg-canvas"></canvas>
+    <div class="sprinkler-detail-container">
+        <img src="assets/Sprinklerpage.png" alt="Choc Sprinkler" class="sprinkler-icon">
+        <div class="sprinkler-title">Choc Sprinkler</div>
+        <div class="sprinkler-stats">
+            <div class="stat-block">
+                <div class="stat-label">Estimated Existing</div>
+                <div class="stat-value">90,000</div>
+            </div>
+            <div class="stat-block">
+                <div class="stat-label">Current Price</div>
+                <div class="stat-value">6B</div>
+            </div>
+            <div class="stat-block">
+                <div class="stat-label">Trend</div>
+                <div class="stat-value trend-up"><span class="trend-arrow">&#8593;</span> Rising</div>
+            </div>
+            <div class="stat-block">
+                <div class="stat-label">Last Available</div>
+                <div class="stat-value">April 27, 2025</div>
+            </div>
+        </div>
+        <div class="sprinkler-graph-container">
+            <div class="chart-filters">
+                <button class="chart-filter-btn active" onclick="setChartRange('week', this)">Past Week</button>
+                <button class="chart-filter-btn" onclick="setChartRange('month', this)">Past Month</button>
+                <button class="chart-filter-btn" onclick="setChartRange('all', this)">All Time</button>
+            </div>
+            <canvas id="sprinklerPriceChart"></canvas>
+        </div>
+        <div class="accordion">
+            <button class="accordion-header" onclick="toggleAccordion(this)">More Info & Description</button>
+            <div class="accordion-content">
+                <div class="section-title">Description</div>
+                <div class="section-text">The Choc Sprinkler is a limited event item that doubles your crop value for a minute. It's valuable because players want every effect on their fruits.</div>
+                <div class="section-title">How to Obtain</div>
+                <div class="section-text">The Choc Sprinkler was sold for 500,000¢ during the 2025 Easter event. After the event ended on April 27, 2025, it could only be acquired through trading with other players.</div>
+                <div class="section-title">Pros & Cons</div>
+                <div class="section-text"><b>Pros:</b><br>
+                - Instantly doubles the value of all crops, including single-use plants (can stack with other boosts).<br>
+                - Was affordable for experienced players during the event.<br>
+                - Unique visual effect and collectible status.
+                </div>
+                <div class="section-text"><b>Cons:</b><br>
+                - Only lasts 1 minute per use.<br>
+                - Pricey for new players when available.<br>
+                - No longer obtainable except via trading.
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Smoother, less drastic price history with small ups/downs
+        const allData = {
+            labels: [
+                '2025-04-19', '2025-04-20', '2025-04-21', '2025-04-22', '2025-04-23', '2025-04-24', '2025-04-25', '2025-04-26', '2025-04-27', // Event Period
+                '2025-04-28', '2025-04-29', '2025-04-30', // Just after event
+                '2025-05-01', '2025-05-05', '2025-05-10', '2025-05-15', '2025-05-20', '2025-05-25', // Gradual rise
+                ...Array.from({length: (Date.now() - new Date('2025-05-25').getTime()) / (1000 * 60 * 60 * 24 * 5) }, (_,i) => { // Every 5 days until 10 days ago
+                    const d = new Date(new Date('2025-05-25').getTime() + (i+1)*5*24*60*60*1000);
+                    if (d.getTime() < (Date.now() - 10*24*60*60*1000)) return d.toISOString().slice(0,10);
+                    return null;
+                }).filter(Boolean),
+                ...Array.from({length: 10}, (_,i) => { // Last 10 days, daily
+                    const d = new Date(Date.now() - (9-i)*24*60*60*1000);
+                    return d.toISOString().slice(0,10);
+                })
+            ],
+            data: [
+                700000, 800000, 900000, 1000000, 1200000, 1100000, 1300000, 1250000, 1500000, // Event Prices
+                2000000, 2200000, 2100000, // Just after event, under 5m
+                2500000, 2800000, 3000000, 3200000, 3500000, 4000000, // Start of Gradual Rise
+                // Generate more points for a smoother curve with small dips
+                ...Array.from({length: Math.max(0, Math.floor((Date.now() - new Date('2025-05-25').getTime()) / (1000 * 60 * 60 * 24 * 5) - 10)) }, (_,i) => {
+                    let prev = allData && allData.data && allData.data.length > 0 ? allData.data[allData.data.length-1] : 4000000;
+                    if (i < 18) prev = 4000000 + i * 20000000; // Reaching ~360M before recent surge
+                    else prev = 360000000 + (i-18) * 500000000; // Exponential growth to ~5B
+                    return prev * (1 + (Math.random()-0.45)*0.1); // Small fluctuations
+                }),
+                // Last 10 days, more defined exponential rise to 6B
+                ...[450000000, 550000000, 700000000, 900000000, 1200000000, 1800000000, 2500000000, 3500000000, 4800000000, 6000000000].map(p => p * (1 + (Math.random()-0.48)*0.05))
+            ]
+        };
+
+        // Ensure the data array for the main part of history has enough points before the last 10 days surge
+        const fillNeeded = Math.max(0, allData.labels.length - allData.data.length - 10);
+        let lastKnownPrice = allData.data.length > 0 ? allData.data[allData.data.length -1] : 4000000;
+        for (let i=0; i < fillNeeded; i++) {
+            lastKnownPrice = lastKnownPrice * (1.02 + (Math.random()-0.45)*0.01); // Slow growth with small variations
+            allData.data.push(Math.min(lastKnownPrice, 400000000)); // Cap before surge
+        }
+        // Append the final 10 day surge data, ensuring it's added after the main history
+        const surgeData = [450000000, 550000000, 700000000, 900000000, 1200000000, 1800000000, 2500000000, 3500000000, 4800000000, 6000000000].map(p => p * (1 + (Math.random()-0.48)*0.05));
+        allData.data = allData.data.slice(0, allData.data.length - 10).concat(surgeData);
+
+
+        function getRangeData(range) {
+            const numLabels = allData.labels.length;
+            if (range === 'week') {
+                return {
+                    labels: allData.labels.slice(Math.max(0, numLabels - 7)),
+                    data: allData.data.slice(Math.max(0, numLabels - 7))
+                };
+            } else if (range === 'month') {
+                // Aim for roughly 30 data points if available, or less if total is less
+                const monthPoints = Math.min(numLabels, 30);
+                return {
+                    labels: allData.labels.slice(Math.max(0, numLabels - monthPoints)),
+                    data: allData.data.slice(Math.max(0, numLabels - monthPoints))
+                };
+            } else { // 'all'
+                return allData;
+            }
+        }
+        let chart;
+        function renderChart(range) {
+            const {labels, data} = getRangeData(range);
+            const ctx = document.getElementById('sprinklerPriceChart').getContext('2d');
+            if (chart) chart.destroy();
+            
+            const unobtainableDate = '2025-04-27';
+            const unobtainableIndex = allData.labels.indexOf(unobtainableDate);
+            
+            // Only show annotation if unobtainable date is within the current range
+            const showAnnotation = labels.includes(unobtainableDate);
+
+            // Calculate min value for y-axis padding
+            const minValue = Math.min(...data);
+            const paddedMin = Math.max(0, minValue - minValue * 0.15);
+
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Choc Sprinkler Price',
+                        data,
+                        borderColor: '#b97fff',
+                        backgroundColor: 'rgba(185,127,255,0.1)',
+                        pointRadius: 0,
+                        tension: 0.4,
+                        pointHoverRadius: 6,
+                        pointHoverBackgroundColor: '#b97fff',
+                        pointHoverBorderColor: '#fff',
+                        pointHoverBorderWidth: 2,
+                        pointHitRadius: 20 // Makes it easier to hover/click on the line
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    onHover: (event, elements) => {
+                        event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
+                    },
+                    onClick: (event, elements) => {
+                        if (elements.length) {
+                            const index = elements[0].index;
+                            const date = chart.data.labels[index];
+                            const price = chart.data.datasets[0].data[index];
+                            // You could add additional interaction here if needed
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        annotation: {
+                            annotations: showAnnotation ? {
+                                unobtainableLine: {
+                                    type: 'line',
+                                    xMin: unobtainableDate,
+                                    xMax: unobtainableDate,
+                                    borderColor: '#ff9800',
+                                    borderWidth: 2,
+                                    borderDash: [6, 6],
+                                    label: {
+                                        enabled: true,
+                                        content: '!',
+                                        position: 'start',
+                                        backgroundColor: 'rgba(255, 152, 0, 0.8)',
+                                        color: '#fff',
+                                        font: { weight: 'bold', size: 14 },
+                                        yAdjust: -15,
+                                        padding: { top: 4, bottom: 2, left: 6, right: 6 },
+                                        borderRadius: 4,
+                                        callbacks: {
+                                            label: function(context) {
+                                                return 'Became unobtainable on April 27, 2025';
+                                            }
+                                        }
+                                    }
+                                }
+                            } : {}
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                            titleColor: '#2e5d34',
+                            bodyColor: '#2e5d34',
+                            borderColor: '#b97fff',
+                            borderWidth: 1,
+                            padding: 12,
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    const date = tooltipItems[0].label;
+                                    if (date === unobtainableDate) {
+                                        return ['Became unobtainable', 'April 27, 2025'];
+                                    }
+                                    // Format date to be more readable
+                                    const d = new Date(date);
+                                    return d.toLocaleDateString('en-US', { 
+                                        year: 'numeric', 
+                                        month: 'long', 
+                                        day: 'numeric' 
+                                    });
+                                },
+                                label: function(context) {
+                                    const value = context.raw;
+                                    let formattedValue;
+                                    if (value >= 1e9) formattedValue = (value/1e9).toFixed(1)+"B";
+                                    else if (value >= 1e6) formattedValue = (value/1e6).toFixed(1)+"M";
+                                    else if (value >= 1e3) formattedValue = (value/1e3).toFixed(1)+"K";
+                                    else formattedValue = value;
+                                    return `Price: ${formattedValue}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'category',
+                            ticks: {
+                                display: false // Hide x-axis labels
+                            },
+                            grid: {
+                                display: false // Hide vertical grid lines
+                            }
+                        },
+                        y: {
+                            beginAtZero: false,
+                            ticks: {
+                                callback: function(value) {
+                                    if (value >= 1e9) return (value/1e9).toFixed(1)+"B";
+                                    if (value >= 1e6) return (value/1e6).toFixed(1)+"M";
+                                    if (value >= 1e3) return (value/1e3).toFixed(1)+"K";
+                                    return value;
+                                },
+                                padding: 10 // Add padding to prevent label cutoff
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            min: paddedMin // Set calculated min for padding
+                        }
+                    }
+                }
+            });
+        }
+        function setChartRange(range, btn) {
+            document.querySelectorAll('.chart-filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderChart(range);
+        }
+        // Initial chart
+        renderChart('all'); // Default to all time to see the unobtainable marker
+
+        // Accordion logic
+        function toggleAccordion(btn) {
+            const content = btn.nextElementSibling;
+            content.classList.toggle('open');
+            if(content.classList.contains('open')) {
+                content.style.maxHeight = content.scrollHeight + 'px';
+            } else {
+                content.style.maxHeight = null;
+            }
+        }
+
+        // Animated purple/gold dots background
+        const bgCanvas = document.getElementById('sprinkler-bg-canvas');
+        const bgCtx = bgCanvas.getContext('2d');
+        let w = window.innerWidth, h = window.innerHeight;
+        bgCanvas.width = w; bgCanvas.height = h;
+        window.addEventListener('resize', () => {
+            w = window.innerWidth; h = window.innerHeight;
+            bgCanvas.width = w; bgCanvas.height = h;
+        });
+        const backgroundDots = Array.from({length: 25}, (_,i) => ({
+            x: Math.random()*w,
+            y: Math.random()*h,
+            r: 6+Math.random()*8,
+            color: Math.random() > 0.5 ? 'rgba(185,127,255,0.6)' : 'rgba(255,215,0,0.6)',
+            speed: 0.1+Math.random()*0.2,
+            angle: Math.random()*Math.PI*2
+        }));
+        function animateBackground() {
+            bgCtx.clearRect(0,0,w,h);
+            for(const d of backgroundDots) {
+                d.x += Math.cos(d.angle)*d.speed;
+                d.y += Math.sin(d.angle)*d.speed;
+                d.angle += (Math.random()-0.5)*0.01;
+                if(d.x < -d.r) d.x = w+d.r; if(d.x > w+d.r) d.x = -d.r;
+                if(d.y < -d.r) d.y = h+d.r; if(d.y > h+d.r) d.y = -d.r;
+                bgCtx.beginPath();
+                bgCtx.arc(d.x, d.y, d.r, 0, Math.PI*2);
+                bgCtx.fillStyle = d.color;
+                bgCtx.shadowColor = d.color;
+                bgCtx.shadowBlur = 15;
+                bgCtx.fill();
+                bgCtx.shadowBlur = 0;
+            }
+            requestAnimationFrame(animateBackground);
+        }
+        animateBackground();
+
+    </script>
+</body>
+</html> 

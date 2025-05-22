@@ -140,7 +140,7 @@
         }
         .chart-filters { 
             display: flex; gap: 1rem; justify-content: flex-end; margin-bottom: 1rem; 
-            position: absolute; right: 2.5rem; top: 2.2rem; z-index: 2;
+            position: absolute; right: 2.5rem; top: 0.5rem; z-index: 2;
         }
         .chart-filter-btn { background: #a259ff; color: #fff; border: none; border-radius: 8px; padding: 0.5rem 1.2rem; font-weight: 600; cursor: pointer; transition: background 0.2s; font-size: 1rem; }
         .chart-filter-btn.active, .chart-filter-btn:hover { background: #232b4a; color: #a259ff; }
@@ -183,7 +183,7 @@
                 <div class="section-title">How to Obtain</div>
                 <div class="section-text">The Night Owl is a Divine pet added in the Animal Update. It can be obtained by hatching the Night Egg with a 4% chance. The egg itself can be obtained by giving Moonlit fruits to the Wise Old Bird, by buying a Night Egg during the Blood Moon Event for 25,000,000 Sheckles or by buying 1 Divine Night Egg for 199 Robux, making it a Rare pet.</div>
                 <div class="section-title">Trait</div>
-                <div class="section-text">Every second all active pets gain an additional 0.22~0.26 XP/s!</div>
+                <div class="section-text">Every second all active pets within its range gain an additional 0.22~0.26 XP/s!</div>
                 <div class="section-title">Pros & Cons</div>
                 <div class="section-text"><b>Pros:</b><br>- Unique Divine pet<br>- Boosts XP gain for all active pets<br>- Limited event availability<br></div>
                 <div class="section-text"><b>Cons:</b><br>- A ton are around and relatively easy to get.</div>
@@ -194,7 +194,7 @@
         // Night Owl price history data
         const allData = {
             labels: (() => {
-                const base = ['2025-05-10','2025-05-11','2025-05-12','2025-05-15','2025-05-16'];
+                const base = ['2025-05-10','2025-05-11','2025-05-12', '2025-05-13', '2025-05-14', '2025-05-15','2025-05-16'];
                 const today = new Date();
                 const lastDate = new Date('2025-05-16');
                 const labels = [...base];
@@ -207,7 +207,7 @@
                 return labels;
             })(),
             data: (() => {
-                const base = [30000000000, 6200000000, 5500000000, 2000000000, 4000000000];
+                const base = [30000000000, 6200000000, 5500000000, 4334000000, 3168000000, 2000000000, 4000000000];
                 const today = new Date();
                 const lastDate = new Date('2025-05-16');
                 const arr = [...base];

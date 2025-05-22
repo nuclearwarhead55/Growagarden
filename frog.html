@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Raccoon - Grow a Garden Price History</title>
+    <title>Frog - Grow a Garden Price History</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.1.0/dist/chartjs-plugin-annotation.min.js"></script>
     <style>
         body {
-            background: linear-gradient(135deg, #2c3e50 0%, #4a6572 100%);
+            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
             min-height: 100vh;
             overflow-x: hidden;
         }
-        .raccoon-detail-container {
+        .frog-detail-container {
             position: relative;
             z-index: 1;
             display: flex;
@@ -22,23 +23,23 @@
             min-height: 100vh;
             padding-bottom: 3rem;
         }
-        .raccoon-icon {
+        .frog-icon {
             width: 110px;
             height: 110px;
             border-radius: 24px;
-            box-shadow: 0 4px 32px #95a5a699, 0 0 0 8px #2c3e50;
+            box-shadow: 0 4px 32px #ffffff99, 0 0 0 8px #000000;
             background: #fff3;
             margin: 2rem 0 1rem 0;
             object-fit: contain;
         }
-        .raccoon-title {
+        .frog-title {
             font-family: 'Luckiest Guy', cursive;
             font-size: 2.2rem;
-            color: #e3e6ff;
-            text-shadow: 2px 2px 0 #2c3e50, 0 4px 12px #95a5a688;
+            color: #ffffff;
+            text-shadow: 2px 2px 0 #000000, 0 4px 12px #ffffff88;
             margin-bottom: 0.5rem;
         }
-        .raccoon-stats {
+        .frog-stats {
             display: flex;
             flex-wrap: wrap;
             gap: 2rem;
@@ -46,29 +47,29 @@
             margin-bottom: 2rem;
         }
         .stat-block {
-            background: #34495e;
+            background: #000000;
             border-radius: 16px;
-            box-shadow: 0 2px 16px #95a5a688;
+            box-shadow: 0 2px 16px #ffffff88;
             padding: 1.2rem 2rem;
             min-width: 140px;
             text-align: center;
         }
         .stat-label {
             font-size: 1rem;
-            color: #95a5a6;
+            color: #cccccc;
             margin-bottom: 0.3rem;
         }
         .stat-value {
             font-size: 1.5rem;
             font-weight: 700;
-            color: #e3e6ff;
+            color: #ffffff;
         }
-        .raccoon-graph-container {
+        .frog-graph-container {
             width: 98vw;
             max-width: 700px;
-            background: #34495e;
+            background: #000000;
             border-radius: 24px;
-            box-shadow: 0 4px 32px #95a5a6cc;
+            box-shadow: 0 4px 32px #ffffffcc;
             padding: 2rem 1rem 3.5rem 1rem;
             margin-bottom: 2rem;
             height: 400px;
@@ -78,131 +79,127 @@
             flex-direction: column;
             justify-content: flex-start;
         }
-        .raccoon-graph-container canvas {
+        .frog-graph-container canvas {
             margin-top: 10px;
         }
         .section-title {
             font-family: 'Luckiest Guy', cursive;
             font-size: 1.3rem;
-            color: #95a5a6;
+            color: #cccccc;
             margin: 1.2rem 0 0.5rem 0;
         }
         .section-text {
             font-size: 1.05rem;
-            color: #e3e6ff;
+            color: #ffffff;
             margin-bottom: 1rem;
         }
-        .accordion { width: 98vw; max-width: 700px; margin: 0 auto 2rem auto; background: #34495e; border-radius: 20px; box-shadow: 0 2px 8px #95a5a688; overflow: hidden; }
-        .accordion-header { cursor: pointer; padding: 1.2rem 2rem; font-size: 1.2rem; font-weight: 600; background: #95a5a6; color: #fff; border: none; outline: none; transition: background 0.2s; }
-        .accordion-header:hover { background: #2c3e50; }
-        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; background: #34495e; padding: 0 2rem; }
+        .accordion { width: 98vw; max-width: 700px; margin: 0 auto 2rem auto; background: #000000; border-radius: 20px; box-shadow: 0 2px 8px #ffffff88; overflow: hidden; }
+        .accordion-header { cursor: pointer; padding: 1.2rem 2rem; font-size: 1.2rem; font-weight: 600; background: #cccccc; color: #000000; border: none; outline: none; transition: background 0.2s; }
+        .accordion-header:hover { background: #ffffff; }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; background: #000000; padding: 0 2rem; }
         .accordion-content.open { padding: 1.5rem 2rem; max-height: 600px; }
         .chart-filters { 
             display: flex; gap: 1rem; justify-content: flex-end; margin-bottom: 1rem; 
             position: absolute; right: 2.5rem; top: 0.5rem; z-index: 2;
         }
-        .chart-filter-btn { background: #95a5a6; color: #fff; border: none; border-radius: 8px; padding: 0.5rem 1.2rem; font-weight: 600; cursor: pointer; transition: background 0.2s; font-size: 1rem; }
-        .chart-filter-btn.active, .chart-filter-btn:hover { background: #34495e; color: #95a5a6; }
+        .chart-filter-btn { background: #cccccc; color: #000000; border: none; border-radius: 8px; padding: 0.5rem 1.2rem; font-weight: 600; cursor: pointer; transition: background 0.2s; font-size: 1rem; }
+        .chart-filter-btn.active, .chart-filter-btn:hover { background: #ffffff; }
     </style>
 </head>
 <body>
-    <a href="pets.html" class="back-btn" style="position:absolute;left:32px;top:32px;z-index:10;text-decoration:none;background:#95a5a6;color:#fff;padding:0.7em 1.5em;border-radius:12px;font-weight:600;box-shadow:0 2px 8px #0002;transition:background 0.2s;">← Back to Pets</a>
-    <div class="raccoon-detail-container">
-        <img src="assets/pets/Raccoon.png" alt="Raccoon" class="raccoon-icon">
-        <div class="raccoon-title">Raccoon</div>
-        <div class="raccoon-stats">
+    <a href="pets.html" class="back-btn" style="position:absolute;left:32px;top:32px;z-index:10;text-decoration:none;background:#cccccc;color:#000000;padding:0.7em 1.5em;border-radius:12px;font-weight:600;box-shadow:0 2px 8px #0002;transition:background 0.2s;">← Back to Pets</a>
+    <div class="frog-detail-container">
+        <img src="assets/pets/Frog.png" alt="Frog" class="frog-icon">
+        <div class="frog-title">Frog</div>
+        <div class="frog-stats">
             <div class="stat-block">
                 <div class="stat-label">Estimated Existing</div>
-                <div class="stat-value">100K</div>
+                <div class="stat-value">37M</div>
             </div>
             <div class="stat-block">
                 <div class="stat-label">Current Price</div>
-                <div class="stat-value">1T</div>
+                <div class="stat-value">3K</div>
             </div>
             <div class="stat-block">
                 <div class="stat-label">Trend</div>
-                <div class="stat-value" style="color:#e53935;">Falling</div>
+                <div class="stat-value" style="color:#e53935;">Lowering</div>
             </div>
             <div class="stat-block">
                 <div class="stat-label">Last Available</div>
                 <div class="stat-value">Still Available</div>
             </div>
         </div>
-        <div class="raccoon-graph-container">
+        <div class="frog-graph-container">
             <div class="chart-filters">
                 <button class="chart-filter-btn active" onclick="setChartRange('week', this)">Past Week</button>
                 <button class="chart-filter-btn" onclick="setChartRange('month', this)">Past Month</button>
                 <button class="chart-filter-btn" onclick="setChartRange('all', this)">All Time</button>
             </div>
-            <canvas id="raccoonPriceChart"></canvas>
+            <canvas id="frogPriceChart"></canvas>
         </div>
         <div class="accordion">
             <button class="accordion-header" onclick="toggleAccordion(this)">More Info & Description</button>
             <div class="accordion-content">
                 <div class="section-title">How to Obtain</div>
-                <div class="section-text">The Raccoon is a Divine pet added in the Lunar Glow update. It can be obtained by hatching the Night egg with a 1% chance.</div>
+                <div class="section-text">The Frog is a Legendary pet that was added in the Lunar Glow Event 2025 (Update 4.3.2). It can be obtained by hatching the Night Egg with a 14% chance. There is also a different variant called the Echo Frog.</div>
+                <div class="section-title">Appearance</div>
+                <div class="section-text">The Frog has a lime green body with a dark green nose and mouth. Its eyes are black. It shares the same model with the Echo Frog.</div>
                 <div class="section-title">Trait</div>
-                <div class="section-text">Every ~15 minutes, the Raccoon goes to another player's plot and duplicates one of their fruits and gives it to you.</div>
+                <div class="section-text">Every ~20 minutes, the Frog will croak and advance the growth of a random nearby plant by 24 hours.</div>
                 <div class="section-title">Pros & Cons</div>
-                <div class="section-text"><b>Pros:</b><br>- Can duplicate any fruit from other players<br>- Works in public servers<br>- Strategic value for rare fruits</div>
-                <div class="section-text"><b>Cons:</b><br>- Event exclusive & 1% chance of obtainment<br>- Often picks low-value fruits in public servers</div>
+                <div class="section-text"><b>Pros:</b><br>- Can significantly speed up plant growth<br>- 14% chance from Night Egg is relatively high for a Legendary<br>- Useful for growing valuable plants faster</div>
+                <div class="section-text"><b>Cons:</b><br>- Random plant selection means you can't target specific plants<br>- 20-minute cooldown between uses<br>- Worth 0 sheckles when sold</div>
             </div>
         </div>
     </div>
     <script>
-        // Raccoon price history data
+        // Frog price history data
         const allData = {
-            labels: (() => {
-                const base = ['2025-05-11','2025-05-12','2025-05-13', '2025-05-14', '2025-05-15', '2025-05-16', '2025-05-17','2025-05-18'];
-                const today = new Date();
-                const lastDate = new Date('2025-05-18');
-                const labels = [...base];
-                while (lastDate < today) {
-                    lastDate.setDate(lastDate.getDate() + 1);
-                    if (lastDate > today) break;
-                    labels.push(lastDate.toISOString().slice(0,10));
-                }
-                labels.push('Now');
-                return labels;
-            })(),
-            data: (() => {
-                const base = [1500000000000, 1200000000000, 1200000000000, 1100000000000, 1000000000000, 900000000000, 800000000000, 700000000000];
-                const today = new Date();
-                const lastDate = new Date('2025-05-18');
-                const arr = [...base];
-                let prev = 700000000000;
-                while (lastDate < today) {
-                    lastDate.setDate(lastDate.getDate() + 1);
-                    if (lastDate > today) break;
-                    prev = prev + (300000000000 / (Math.max(1, (today - new Date('2025-05-18'))/(1000*60*60*24))));
-                    arr.push(Math.min(1000000000000, prev));
-                }
-                arr.push(1000000000000);
-                return arr;
-            })()
+            labels: [
+                '2025-05-10', '2025-05-11', '2025-05-12', '2025-05-13', '2025-05-14', 
+                '2025-05-15', '2025-05-16', '2025-05-17', '2025-05-18', '2025-05-19', 
+                '2025-05-20', '2025-05-21', '2025-05-22'
+            ],
+            data: [
+                50000000, 20000000, 5000000, 1000000, 3000000,
+                700000, 400000, 200000, 100000, 30000,
+                10000, 5000, 3000
+            ]
         };
 
         function getRangeData(range) {
             const numLabels = allData.labels.length;
-            if (range === 'week') {
-                return {
-                    labels: allData.labels.slice(Math.max(0, numLabels - 7)),
-                    data: allData.data.slice(Math.max(0, numLabels - 7))
-                };
-            } else if (range === 'month') {
-                const monthPoints = Math.min(numLabels, 30);
-                return {
-                    labels: allData.labels.slice(Math.max(0, numLabels - monthPoints)),
-                    data: allData.data.slice(Math.max(0, numLabels - monthPoints))
-                };
-            } else { // 'all'
-                return allData;
+            let filteredLabels = allData.labels;
+            let filteredData = allData.data;
+            
+            if (range === 'week' || range === 'month') {
+                const today = new Date();
+                const days = range === 'week' ? 7 : 30;
+                // Exclude 'Now' for date filtering
+                const dateLabels = allData.labels.slice(0, -1);
+                const dateData = allData.data.slice(0, -1);
+                const filtered = dateLabels.map((label, i) => {
+                    const date = new Date(label);
+                    if (isNaN(date)) return null;
+                    const diff = (today - date) / (1000 * 60 * 60 * 24);
+                    return diff <= days ? { label, data: dateData[i] } : null;
+                }).filter(Boolean);
+                filteredLabels = filtered.map(d => d.label);
+                filteredData = filtered.map(d => d.data);
+                // Always include 'Now' as last point
+                filteredLabels.push('Now');
+                filteredData.push(allData.data[allData.data.length - 1]);
             }
+            return {
+                labels: filteredLabels,
+                data: filteredData,
+                showAnnotation: false
+            };
         }
         let chart;
         function renderChart(range) {
-            const {labels, data} = getRangeData(range);
-            const ctx = document.getElementById('raccoonPriceChart').getContext('2d');
+            const {labels, data, showAnnotation} = getRangeData(range);
+            const ctx = document.getElementById('frogPriceChart').getContext('2d');
             if (chart) chart.destroy();
             
             // Calculate min value for y-axis padding
@@ -214,14 +211,14 @@
                 data: {
                     labels,
                     datasets: [{
-                        label: 'Raccoon Price',
+                        label: 'Frog Price',
                         data,
-                        borderColor: '#95a5a6',
-                        backgroundColor: 'rgba(149,165,166,0.1)',
+                        borderColor: '#cccccc',
+                        backgroundColor: 'rgba(204,204,204,0.1)',
                         pointRadius: 0,
                         tension: 0.4,
                         pointHoverRadius: 6,
-                        pointHoverBackgroundColor: '#95a5a6',
+                        pointHoverBackgroundColor: '#cccccc',
                         pointHoverBorderColor: '#fff',
                         pointHoverBorderWidth: 2,
                         pointHitRadius: 20
@@ -242,16 +239,15 @@
                             const index = elements[0].index;
                             const date = chart.data.labels[index];
                             const price = chart.data.datasets[0].data[index];
-                            // You could add additional interaction here if needed
                         }
                     },
                     plugins: {
                         legend: { display: false },
                         tooltip: {
                             backgroundColor: 'rgba(255,255,255,0.95)',
-                            titleColor: '#2c3e50',
-                            bodyColor: '#2c3e50',
-                            borderColor: '#95a5a6',
+                            titleColor: '#000000',
+                            bodyColor: '#000000',
+                            borderColor: '#cccccc',
                             borderWidth: 1,
                             padding: 12,
                             callbacks: {
@@ -264,8 +260,7 @@
                                 label: function(context) {
                                     const value = context.raw;
                                     let formattedValue;
-                                    if (value >= 1e12) formattedValue = (value/1e12).toFixed(1)+"T";
-                                    else if (value >= 1e9) formattedValue = (value/1e9).toFixed(1)+"B";
+                                    if (value >= 1e9) formattedValue = (value/1e9).toFixed(1)+"B";
                                     else if (value >= 1e6) formattedValue = (value/1e6).toFixed(1)+"M";
                                     else if (value >= 1e3) formattedValue = (value/1e3).toFixed(1)+"K";
                                     else formattedValue = value;
@@ -282,13 +277,13 @@
                             },
                             grid: {
                                 display: false // Hide vertical grid lines
-                            }
+                            },
+                            offset: true
                         },
                         y: {
                             beginAtZero: false,
                             ticks: {
                                 callback: function(value) {
-                                    if (value >= 1e12) return (value/1e12).toFixed(1)+"T";
                                     if (value >= 1e9) return (value/1e9).toFixed(1)+"B";
                                     if (value >= 1e6) return (value/1e6).toFixed(1)+"M";
                                     if (value >= 1e3) return (value/1e3).toFixed(1)+"K";
@@ -297,7 +292,7 @@
                                 padding: 10 // Add padding to prevent label cutoff
                             },
                             grid: {
-                                color: 'rgba(149,165,166,0.15)'
+                                color: 'rgba(204,204,204,0.15)'
                             },
                             min: paddedMin // Set calculated min for padding
                         }

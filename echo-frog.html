@@ -99,7 +99,7 @@
         .accordion-content.open { padding: 1.5rem 2rem; max-height: 600px; }
         .chart-filters { 
             display: flex; gap: 1rem; justify-content: flex-end; margin-bottom: 1rem; 
-            position: absolute; right: 2.5rem; top: 1.5rem; z-index: 2;
+            position: absolute; right: 2.5rem; top: 0.5rem; z-index: 2;
         }
         .chart-filter-btn { background: #81d4fa; color: #fff; border: none; border-radius: 8px; padding: 0.5rem 1.2rem; font-weight: 600; cursor: pointer; transition: background 0.2s; font-size: 1rem; }
         .chart-filter-btn.active, .chart-filter-btn:hover { background: #1976d2; color: #81d4fa; }
@@ -157,7 +157,7 @@
         // Echo Frog price history data
         const allData = {
             labels: (() => {
-                const base = ['2025-05-10','2025-05-11','2025-05-14','2025-05-16','2025-05-19'];
+                const base = ['2025-05-10','2025-05-11', '2025-05-12', '2025-05-13', '2025-05-14', '2025-05-15', '2025-05-16', '2025-05-17', '2025-05-18', '2025-05-19'];
                 const today = new Date();
                 const lastDate = new Date('2025-05-19');
                 const labels = [...base];
@@ -170,7 +170,7 @@
                 return labels;
             })(),
             data: (() => {
-                const base = [3000000000, 2000000000, 1000000000, 250000000, 50000000];
+                const base = [3000000000, 2000000000, 1667000000, 1333000000, 1000000000, 625000000, 250000000, 150000000, 100000000, 50000000];
                 const today = new Date();
                 const lastDate = new Date('2025-05-19');
                 const arr = [...base];

@@ -68,11 +68,11 @@
         <div class="sprinkler-stats">
             <div class="stat-block">
                 <div class="stat-label">Estimated Existing</div>
-                <div class="stat-value">290,000</div>
+                <div class="stat-value">260,000</div>
             </div>
             <div class="stat-block">
                 <div class="stat-label">Current Price</div>
-                <div class="stat-value">6B</div>
+                <div class="stat-value">11B</div>
             </div>
             <div class="stat-block">
                 <div class="stat-label">Trend</div>
@@ -140,8 +140,8 @@
                     else prev = 360000000 + (i-18) * 500000000; // Exponential growth to ~5B
                     return prev * (1 + (Math.random()-0.45)*0.1); // Small fluctuations
                 }),
-                // Last 10 days, more defined exponential rise to 6B
-                ...[450000000, 550000000, 700000000, 900000000, 1200000000, 1800000000, 2500000000, 3500000000, 4800000000, 6000000000].map(p => p * (1 + (Math.random()-0.48)*0.05))
+                // Last 10 days, more defined exponential rise to 11B
+                ...[450000000, 550000000, 700000000, 900000000, 1200000000, 1800000000, 2500000000, 3500000000, 4800000000, 11000000000].map(p => p * (1 + (Math.random()-0.48)*0.05))
             ]
         };
 
@@ -153,7 +153,7 @@
             allData.data.push(Math.min(lastKnownPrice, 400000000)); // Cap before surge
         }
         // Append the final 10 day surge data, ensuring it's added after the main history
-        const surgeData = [450000000, 550000000, 700000000, 900000000, 1200000000, 1800000000, 2500000000, 3500000000, 4800000000, 6000000000].map(p => p * (1 + (Math.random()-0.48)*0.05));
+        const surgeData = [450000000, 550000000, 700000000, 900000000, 1200000000, 1800000000, 2500000000, 3500000000, 4800000000, 11000000000].map(p => p * (1 + (Math.random()-0.48)*0.05));
         allData.data = allData.data.slice(0, allData.data.length - 10).concat(surgeData);
 
 

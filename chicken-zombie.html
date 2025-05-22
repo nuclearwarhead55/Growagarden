@@ -179,9 +179,9 @@
                     lastDate.setDate(lastDate.getDate() + 1);
                     if (lastDate > today) break;
                     prev = prev * 1.1; // 10% increase each day
-                    arr.push(Math.min(25000000000, prev));
+                    arr.push(Math.min(20000000000, prev));
                 }
-                arr.push(25000000000);
+                arr.push(20000000000);
                 return arr;
             })()
         };

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Owl - Grow a Garden Price History</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #8B0000 0%, #4A0000 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .bloodowl-detail-container {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding-bottom: 3rem;
+        }
+        .bloodowl-icon {
+            width: 110px;
+            height: 110px;
+            border-radius: 24px;
+            box-shadow: 0 4px 32px #ff000099, 0 0 0 8px #4A0000;
+            background: #fff3;
+            margin: 2rem 0 1rem 0;
+            object-fit: contain;
+        }
+        .bloodowl-title {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 2.2rem;
+            color: #ffcccc;
+            text-shadow: 2px 2px 0 #4A0000, 0 4px 12px #ff000088;
+            margin-bottom: 0.5rem;
+        }
+        .bloodowl-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        .stat-block {
+            background: #4A0000;
+            border-radius: 16px;
+            box-shadow: 0 2px 16px #ff000088;
+            padding: 1.2rem 2rem;
+            min-width: 140px;
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 1rem;
+            color: #ff6666;
+            margin-bottom: 0.3rem;
+        }
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffcccc;
+        }
+        .bloodowl-graph-container {
+            width: 98vw;
+            max-width: 700px;
+            background: #4A0000;
+            border-radius: 24px;
+            box-shadow: 0 4px 32px #ff0000cc;
+            padding: 2rem 1rem 3.5rem 1rem;
+            margin-bottom: 2rem;
+            height: 400px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        .bloodowl-graph-container canvas {
+            margin-top: 10px;
+        }
+        .section-title {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 1.3rem;
+            color: #ff6666;
+            margin: 1.2rem 0 0.5rem 0;
+        }
+        .section-text {
+            font-size: 1.05rem;
+            color: #ffcccc;
+            margin-bottom: 1rem;
+        }
+        .accordion { width: 98vw; max-width: 700px; margin: 0 auto 2rem auto; background: #4A0000; border-radius: 20px; box-shadow: 0 2px 8px #ff000088; overflow: hidden; }
+        .accordion-header { cursor: pointer; padding: 1.2rem 2rem; font-size: 1.2rem; font-weight: 600; background: #ff6666; color: #fff; border: none; outline: none; transition: background 0.2s; }
+        .accordion-header:hover { background: #4A0000; }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; background: #4A0000; padding: 0 2rem; }
+        .accordion-content.open { padding: 1.5rem 2rem; max-height: 600px; }
+        .chart-filters { 
+            display: flex; gap: 1rem; justify-content: flex-end; margin-bottom: 1rem; 
+            position: absolute; right: 2.5rem; top: 1.5rem; z-index: 2;
+        }
+        .chart-filter-btn { background: #ff6666; color: #fff; border: none; border-radius: 8px; padding: 0.5rem 1.2rem; font-weight: 600; cursor: pointer; transition: background 0.2s; font-size: 1rem; }
+        .chart-filter-btn.active, .chart-filter-btn:hover { background: #4A0000; color: #ff6666; }
+    </style>
+</head>
+<body>
+    <a href="pets.html" class="back-btn" style="position:absolute;left:32px;top:32px;z-index:10;text-decoration:none;background:#ff6666;color:#fff;padding:0.7em 1.5em;border-radius:12px;font-weight:600;box-shadow:0 2px 8px #0002;transition:background 0.2s;">← Back to Pets</a>
+    <div class="bloodowl-detail-container">
+        <img src="assets/pets/BloodOwl.png" alt="Blood Owl" class="bloodowl-icon">
+        <div class="bloodowl-title">Blood Owl</div>
+        <div class="bloodowl-stats">
+            <div class="stat-block">
+                <div class="stat-label">Estimated Existing</div>
+                <div class="stat-value">1.5M</div>
+            </div>
+            <div class="stat-block">
+                <div class="stat-label">Current Price</div>
+                <div class="stat-value">4B</div>
+            </div>
+            <div class="stat-block">
+                <div class="stat-label">Trend</div>
+                <div class="stat-value" style="color:#ffd600;">Stable</div>
+            </div>
+            <div class="stat-block">
+                <div class="stat-label">Last Available</div>
+                <div class="stat-value">Still Available</div>
+            </div>
+        </div>
+        <div class="bloodowl-graph-container">
+            <div class="chart-filters">
+                <button class="chart-filter-btn active" onclick="setChartRange('week', this)">Past Week</button>
+                <button class="chart-filter-btn" onclick="setChartRange('month', this)">Past Month</button>
+                <button class="chart-filter-btn" onclick="setChartRange('all', this)">All Time</button>
+            </div>
+            <canvas id="bloodOwlPriceChart"></canvas>
+        </div>
+        <div class="accordion">
+            <button class="accordion-header" onclick="toggleAccordion(this)">More Info & Description</button>
+            <div class="accordion-content">
+                <div class="section-title">How to Obtain</div>
+                <div class="section-text">The Blood Owl is a Divine pet added in the Blood Moon Event update (Update 1.06.0). It can be purchased from the Blood Moon Shop for 60,000,000¢.</div>
+                <div class="section-title">Trait</div>
+                <div class="section-text">All active pets gain about 0.5 extra XP per second.</div>
+                <div class="section-title">Pros & Cons</div>
+                <div class="section-text"><b>Pros:</b><br>- Significant XP boost for all active pets<br>- One of nine new pets in the Blood Moon Event<br>- High hunger capacity (50,000)</div>
+                <div class="section-text"><b>Cons:</b><br>- Event exclusive<br>- Relatively expensive at 60M¢<br>- Shares model with regular Owl</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Blood Owl price history data
+        const allData = {
+            labels: (() => {
+                const base = ['2025-05-17','2025-05-18','2025-05-19','2025-05-20','2025-05-21','2025-05-22','2025-05-23'];
+                const today = new Date();
+                const lastDate = new Date('2025-05-23');
+                const labels = [...base];
+                while (lastDate < today) {
+                    lastDate.setDate(lastDate.getDate() + 1);
+                    if (lastDate > today) break;
+                    labels.push(lastDate.toISOString().slice(0,10));
+                }
+                labels.push('Now');
+                return labels;
+            })(),
+            data: (() => {
+                const base = [4000000000, 3000000000, 3500000000, 3800000000, 4200000000, 4100000000, 4000000000];
+                const today = new Date();
+                const lastDate = new Date('2025-05-23');
+                const arr = [...base];
+                let prev = 4000000000;
+                while (lastDate < today) {
+                    lastDate.setDate(lastDate.getDate() + 1);
+                    if (lastDate > today) break;
+                    prev = prev + (Math.random() - 0.5) * 200000000;
+                    arr.push(Math.max(3500000000, Math.min(4500000000, prev)));
+                }
+                arr.push(4000000000);
+                return arr;
+            })()
+        };
+
+        function getRangeData(range) {
+            const numLabels = allData.labels.length;
+            if (range === 'week') {
+                return {
+                    labels: allData.labels.slice(Math.max(0, numLabels - 7)),
+                    data: allData.data.slice(Math.max(0, numLabels - 7))
+                };
+            } else if (range === 'month') {
+                const monthPoints = Math.min(numLabels, 30);
+                return {
+                    labels: allData.labels.slice(Math.max(0, numLabels - monthPoints)),
+                    data: allData.data.slice(Math.max(0, numLabels - monthPoints))
+                };
+            } else { // 'all'
+                return allData;
+            }
+        }
+        let chart;
+        function renderChart(range) {
+            const {labels, data} = getRangeData(range);
+            const ctx = document.getElementById('bloodOwlPriceChart').getContext('2d');
+            if (chart) chart.destroy();
+            
+            // Calculate min value for y-axis padding
+            const minValue = Math.min(...data);
+            const paddedMin = Math.max(0, minValue - minValue * 0.15);
+            
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Blood Owl Price',
+                        data,
+                        borderColor: '#ff6666',
+                        backgroundColor: 'rgba(255,102,102,0.1)',
+                        pointRadius: 0,
+                        tension: 0.4,
+                        pointHoverRadius: 6,
+                        pointHoverBackgroundColor: '#ff6666',
+                        pointHoverBorderColor: '#fff',
+                        pointHoverBorderWidth: 2,
+                        pointHitRadius: 20
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    onHover: (event, elements) => {
+                        event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
+                    },
+                    onClick: (event, elements) => {
+                        if (elements.length) {
+                            const index = elements[0].index;
+                            const date = chart.data.labels[index];
+                            const price = chart.data.datasets[0].data[index];
+                            // You could add additional interaction here if needed
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(255,255,255,0.95)',
+                            titleColor: '#4A0000',
+                            bodyColor: '#4A0000',
+                            borderColor: '#ff6666',
+                            borderWidth: 1,
+                            padding: 12,
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    const date = tooltipItems[0].label;
+                                    if (date === 'Now') return 'Current';
+                                    const d = new Date(date);
+                                    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                                },
+                                label: function(context) {
+                                    const value = context.raw;
+                                    let formattedValue;
+                                    if (value >= 1e12) formattedValue = (value/1e12).toFixed(1)+"T";
+                                    else if (value >= 1e9) formattedValue = (value/1e9).toFixed(1)+"B";
+                                    else if (value >= 1e6) formattedValue = (value/1e6).toFixed(1)+"M";
+                                    else if (value >= 1e3) formattedValue = (value/1e3).toFixed(1)+"K";
+                                    else formattedValue = value;
+                                    return `Price: ${formattedValue}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'category',
+                            ticks: {
+                                display: false // Hide x-axis labels
+                            },
+                            grid: {
+                                display: false // Hide vertical grid lines
+                            }
+                        },
+                        y: {
+                            beginAtZero: false,
+                            ticks: {
+                                callback: function(value) {
+                                    if (value >= 1e12) return (value/1e12).toFixed(1)+"T";
+                                    if (value >= 1e9) return (value/1e9).toFixed(1)+"B";
+                                    if (value >= 1e6) return (value/1e6).toFixed(1)+"M";
+                                    if (value >= 1e3) return (value/1e3).toFixed(1)+"K";
+                                    return value;
+                                },
+                                padding: 10 // Add padding to prevent label cutoff
+                            },
+                            grid: {
+                                color: 'rgba(255,102,102,0.15)'
+                            },
+                            min: paddedMin // Set calculated min for padding
+                        }
+                    }
+                }
+            });
+        }
+        function setChartRange(range, btn) {
+            document.querySelectorAll('.chart-filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderChart(range);
+        }
+        // Initial chart
+        renderChart('all');
+        // Accordion logic
+        function toggleAccordion(btn) {
+            const content = btn.nextElementSibling;
+            content.classList.toggle('open');
+            if(content.classList.contains('open')) {
+                content.style.maxHeight = content.scrollHeight + 'px';
+            } else {
+                content.style.maxHeight = null;
+            }
+        }
+    </script>
+</body>
+</html> 

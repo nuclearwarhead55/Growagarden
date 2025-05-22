@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red Fox - Grow a Garden Price History</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #FF5722 0%, #FF9800 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .fox-detail-container {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding-bottom: 3rem;
+        }
+        .fox-icon {
+            width: 110px;
+            height: 110px;
+            border-radius: 24px;
+            box-shadow: 0 4px 32px #FF572299, 0 0 0 8px #424242;
+            background: #fff3;
+            margin: 2rem 0 1rem 0;
+            object-fit: contain;
+        }
+        .fox-title {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 2.2rem;
+            color: #ffffff;
+            text-shadow: 2px 2px 0 #424242, 0 4px 12px #FF572288;
+            margin-bottom: 0.5rem;
+        }
+        .fox-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        .stat-block {
+            background: #424242;
+            border-radius: 16px;
+            box-shadow: 0 2px 16px #FF572288;
+            padding: 1.2rem 2rem;
+            min-width: 140px;
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 1rem;
+            color: #FF5722;
+            margin-bottom: 0.3rem;
+        }
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+        .fox-graph-container {
+            width: 98vw;
+            max-width: 700px;
+            background: #424242;
+            border-radius: 24px;
+            box-shadow: 0 4px 32px #FF5722cc;
+            padding: 2rem 1rem 3.5rem 1rem;
+            margin-bottom: 2rem;
+            height: 400px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        .fox-graph-container canvas {
+            margin-top: 10px;
+        }
+        .section-title {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 1.3rem;
+            color: #FF5722;
+            margin: 1.2rem 0 0.5rem 0;
+        }
+        .section-text {
+            font-size: 1.05rem;
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
+        .accordion { width: 98vw; max-width: 700px; margin: 0 auto 2rem auto; background: #424242; border-radius: 20px; box-shadow: 0 2px 8px #FF572288; overflow: hidden; }
+        .accordion-header { cursor: pointer; padding: 1.2rem 2rem; font-size: 1.2rem; font-weight: 600; background: #FF5722; color: #fff; border: none; outline: none; transition: background 0.2s; }
+        .accordion-header:hover { background: #FF9800; }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; background: #424242; padding: 0 2rem; }
+        .accordion-content.open { padding: 1.5rem 2rem; max-height: 600px; }
+        .chart-filters { 
+            display: flex; gap: 1rem; justify-content: flex-end; margin-bottom: 1rem; 
+            position: absolute; right: 2.5rem; top: 0.5rem; z-index: 2;
+        }
+        .chart-filter-btn { background: #FF5722; color: #fff; border: none; border-radius: 8px; padding: 0.5rem 1.2rem; font-weight: 600; cursor: pointer; transition: background 0.2s; font-size: 1rem; }
+        .chart-filter-btn.active, .chart-filter-btn:hover { background: #FF9800; }
+        .floor-toggle {
+            position: absolute;
+            left: 2.5rem;
+            top: 0.5rem;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #424242;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            color: #fff;
+        }
+        .floor-toggle input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        .price-view-select {
+            position: absolute;
+            left: 2.5rem;
+            top: 0.5rem;
+            z-index: 2;
+        }
+        .price-view-btn {
+            background: #424242;
+            color: #fff;
+            border: 1px solid #FF5722;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .price-view-btn:hover {
+            background: #FF5722;
+        }
+        .price-view-btn.active {
+            background: #FF5722;
+            color: #fff;
+        }
+        .price-options {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #424242;
+            border: 1px solid #FF5722;
+            border-radius: 8px;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            display: none;
+            flex-direction: column;
+            gap: 0.5rem;
+            min-width: 150px;
+        }
+        .price-options.show {
+            display: flex;
+        }
+        .price-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #fff;
+            cursor: pointer;
+            padding: 0.3rem 0.5rem;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .price-option:hover {
+            background: rgba(255,87,34,0.2);
+        }
+        .price-option input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <a href="pets.html" class="back-btn" style="position:absolute;left:32px;top:32px;z-index:10;text-decoration:none;background:#FF5722;color:#fff;padding:0.7em 1.5em;border-radius:12px;font-weight:600;box-shadow:0 2px 8px #0002;transition:background 0.2s;">← Back to Pets</a>
+    <div class="fox-detail-container">
+        <img src="assets/pets/RedFox.png" alt="Red Fox" class="fox-icon">
+        <div class="fox-title">Red Fox</div>
+        <div class="fox-stats">
+            <div class="stat-block">
+                <div class="stat-label">Estimated Existing</div>
+                <div class="stat-value">300K</div>
+            </div>
+            <div class="stat-block">
+                <div class="stat-label">Current Price</div>
+                <div class="stat-value">790B</div>
+            </div>
+            <div class="stat-block">
+                <div class="stat-label">Trend</div>
+                <div class="stat-value" style="color:#4caf50;">Rising</div>
+            </div>
+            <div class="stat-block">
+                <div class="stat-label">Last Available</div>
+                <div class="stat-value">Still Available</div>
+            </div>
+        </div>
+        <div class="fox-graph-container">
+            <div class="price-view-select">
+                <button class="price-view-btn" onclick="togglePriceOptions(this)">
+                    More Options
+                    <span style="font-size: 0.8rem;">▼</span>
+                </button>
+                <div class="price-options">
+                    <label class="price-option">
+                        <input type="checkbox" checked onchange="updatePriceView()"> Normal
+                    </label>
+                    <label class="price-option">
+                        <input type="checkbox" onchange="updatePriceView()"> Floor
+                    </label>
+                    <label class="price-option">
+                        <input type="checkbox" onchange="updatePriceView()"> Giant
+                    </label>
+                </div>
+            </div>
+            <div class="chart-filters">
+                <button class="chart-filter-btn active" onclick="setChartRange('week', this)">Past Week</button>
+                <button class="chart-filter-btn" onclick="setChartRange('month', this)">Past Month</button>
+                <button class="chart-filter-btn" onclick="setChartRange('all', this)">All Time</button>
+            </div>
+            <canvas id="foxPriceChart"></canvas>
+        </div>
+        <div class="accordion">
+            <button class="accordion-header" onclick="toggleAccordion(this)">More Info & Description</button>
+            <div class="accordion-content">
+                <div class="section-title">How to Obtain</div>
+                <div class="section-text">The Red Fox is a Mythical pet that was added in the Blood Moon Update (May 17th, 2025). It can be obtained by hatching a Mythical Egg with a 1.79% chance.</div>
+                <div class="section-title">Appearance</div>
+                <div class="section-text">The Red Fox has red fur with a pinch of white, dark-grey and light-red parts. Its eyes and mouth are black.</div>
+                <div class="section-title">Trait</div>
+                <div class="section-text">Every ~10 minutes, the Red Fox goes to a random player's garden and attempts to steal a seed from a random non-event crop.</div>
+                <div class="section-title">Pros & Cons</div>
+                <div class="section-text"><b>Pros:</b><br>- Can help you get rare seeds from other players<br>- 1.79% chance from Mythical Egg is relatively high for a Mythical pet<br>- Unique stealing mechanic</div>
+                <div class="section-text"><b>Cons:</b><br>- Random target selection means you can't choose whose garden to steal from<br>- 10-minute cooldown between attempts<br>- Can only steal non-event crop seeds<br>- Worth 0 sheckles when sold</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Red Fox price history data
+        const allData = {
+            labels: [
+                '2025-05-17', '2025-05-18', '2025-05-19', '2025-05-20', '2025-05-21', '2025-05-22'
+            ],
+            currentPrice: [
+                800000000000, 700000000000, 650000000000, 700000000000, 800000000000, 790000000000
+            ],
+            floorPrice: [
+                250000000000, 345000000000, 400000000000, 417000000000, 500000000000, 400000000000
+            ]
+        };
+
+        function getMultiplierPrice(prices) {
+            return prices.map(price => price * 12);
+        }
+
+        function togglePriceOptions(btn) {
+            const options = btn.nextElementSibling;
+            options.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.querySelector('.price-view-select');
+            if (!dropdown.contains(event.target)) {
+                document.querySelector('.price-options').classList.remove('show');
+            }
+        });
+
+        function getRangeData(range) {
+            const numLabels = allData.labels.length;
+            let filteredLabels = allData.labels;
+            let filteredCurrentPrice = allData.currentPrice;
+            let filteredFloorPrice = allData.floorPrice;
+            
+            if (range === 'week' || range === 'month') {
+                const today = new Date();
+                const days = range === 'week' ? 7 : 30;
+                const filtered = allData.labels.map((label, i) => {
+                    const date = new Date(label);
+                    if (isNaN(date)) return null;
+                    const diff = (today - date) / (1000 * 60 * 60 * 24);
+                    return diff <= days ? { 
+                        label, 
+                        currentPrice: allData.currentPrice[i],
+                        floorPrice: allData.floorPrice[i]
+                    } : null;
+                }).filter(Boolean);
+                filteredLabels = filtered.map(d => d.label);
+                filteredCurrentPrice = filtered.map(d => d.currentPrice);
+                filteredFloorPrice = filtered.map(d => d.floorPrice);
+            }
+            return {
+                labels: filteredLabels,
+                currentPrice: filteredCurrentPrice,
+                floorPrice: filteredFloorPrice
+            };
+        }
+
+        function updatePriceView() {
+            renderChart(document.querySelector('.chart-filter-btn.active').textContent.toLowerCase().includes('week') ? 'week' : 
+                       document.querySelector('.chart-filter-btn.active').textContent.toLowerCase().includes('month') ? 'month' : 'all');
+        }
+
+        let chart;
+        function renderChart(range) {
+            const {labels, currentPrice, floorPrice} = getRangeData(range);
+            const ctx = document.getElementById('foxPriceChart').getContext('2d');
+            if (chart) chart.destroy();
+            
+            const datasets = [];
+            const checkboxes = document.querySelectorAll('.price-option input[type="checkbox"]');
+
+            if (checkboxes[0].checked) {
+                datasets.push({
+                    label: 'Current Price',
+                    data: currentPrice,
+                    borderColor: '#FF5722',
+                    backgroundColor: 'rgba(255,87,34,0.1)',
+                    pointRadius: 0,
+                    tension: 0.4,
+                    pointHoverRadius: 6,
+                    pointHoverBackgroundColor: '#FF5722',
+                    pointHoverBorderColor: '#fff',
+                    pointHoverBorderWidth: 2,
+                    pointHitRadius: 20
+                });
+            }
+
+            if (checkboxes[1].checked) {
+                datasets.push({
+                    label: 'Floor Price',
+                    data: floorPrice,
+                    borderColor: '#FF9800',
+                    backgroundColor: 'rgba(255,152,0,0.1)',
+                    pointRadius: 0,
+                    tension: 0.4,
+                    pointHoverRadius: 6,
+                    pointHoverBackgroundColor: '#FF9800',
+                    pointHoverBorderColor: '#fff',
+                    pointHoverBorderWidth: 2,
+                    pointHitRadius: 20
+                });
+            }
+
+            if (checkboxes[2].checked) {
+                datasets.push({
+                    label: 'Giant',
+                    data: getMultiplierPrice(currentPrice),
+                    borderColor: '#FFC107',
+                    backgroundColor: 'rgba(255,193,7,0.1)',
+                    pointRadius: 0,
+                    tension: 0.4,
+                    pointHoverRadius: 6,
+                    pointHoverBackgroundColor: '#FFC107',
+                    pointHoverBorderColor: '#fff',
+                    pointHoverBorderWidth: 2,
+                    pointHitRadius: 20
+                });
+            }
+
+            const allValues = datasets.flatMap(dataset => dataset.data);
+            const minValue = Math.min(...allValues);
+            const paddedMin = Math.max(0, minValue - minValue * 0.15);
+            
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    onHover: (event, elements) => {
+                        event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
+                    },
+                    plugins: {
+                        legend: { 
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                color: '#fff',
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(255,255,255,0.95)',
+                            titleColor: '#424242',
+                            bodyColor: '#424242',
+                            borderColor: '#FF5722',
+                            borderWidth: 1,
+                            padding: 12,
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    const date = tooltipItems[0].label;
+                                    if (date === 'Now') return 'Current';
+                                    const d = new Date(date);
+                                    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                                },
+                                label: function(context) {
+                                    const value = context.raw;
+                                    let formattedValue;
+                                    if (value >= 1e12) formattedValue = (value/1e12).toFixed(1)+"T";
+                                    else if (value >= 1e9) formattedValue = (value/1e9).toFixed(1)+"B";
+                                    else if (value >= 1e6) formattedValue = (value/1e6).toFixed(1)+"M";
+                                    else if (value >= 1e3) formattedValue = (value/1e3).toFixed(1)+"K";
+                                    else formattedValue = value;
+                                    return `${context.dataset.label}: ${formattedValue}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'category',
+                            ticks: {
+                                display: false
+                            },
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            beginAtZero: false,
+                            ticks: {
+                                callback: function(value) {
+                                    if (value >= 1e12) return (value/1e12).toFixed(1)+"T";
+                                    if (value >= 1e9) return (value/1e9).toFixed(1)+"B";
+                                    if (value >= 1e6) return (value/1e6).toFixed(1)+"M";
+                                    if (value >= 1e3) return (value/1e3).toFixed(1)+"K";
+                                    return value;
+                                },
+                                padding: 10
+                            },
+                            grid: {
+                                color: 'rgba(255,87,34,0.15)'
+                            },
+                            min: paddedMin
+                        }
+                    }
+                }
+            });
+        }
+        function toggleFloorPrice(checkbox) {
+            renderChart(document.querySelector('.chart-filter-btn.active').textContent.toLowerCase().includes('week') ? 'week' : 
+                       document.querySelector('.chart-filter-btn.active').textContent.toLowerCase().includes('month') ? 'month' : 'all');
+        }
+        function setChartRange(range, btn) {
+            document.querySelectorAll('.chart-filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderChart(range);
+        }
+        // Initial chart
+        renderChart('all');
+        // Accordion logic
+        function toggleAccordion(btn) {
+            const content = btn.nextElementSibling;
+            content.classList.toggle('open');
+            if(content.classList.contains('open')) {
+                content.style.maxHeight = content.scrollHeight + 'px';
+            } else {
+                content.style.maxHeight = null;
+            }
+        }
+    </script>
+</body>
+</html> 

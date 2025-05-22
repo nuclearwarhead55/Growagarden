@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mole - Grow a Garden Price History</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #795548 0%, #8D6E63 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .mole-detail-container {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding-bottom: 3rem;
+        }
+        .mole-icon {
+            width: 110px;
+            height: 110px;
+            border-radius: 24px;
+            box-shadow: 0 4px 32px #79554899, 0 0 0 8px #424242;
+            background: #fff3;
+            margin: 2rem 0 1rem 0;
+            object-fit: contain;
+        }
+        .mole-title {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 2.2rem;
+            color: #ffffff;
+            text-shadow: 2px 2px 0 #424242, 0 4px 12px #79554888;
+            margin-bottom: 0.5rem;
+        }
+        .mole-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        .stat-block {
+            background: #424242;
+            border-radius: 16px;
+            box-shadow: 0 2px 16px #79554888;
+            padding: 1.2rem 2rem;
+            min-width: 140px;
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 1rem;
+            color: #795548;
+            margin-bottom: 0.3rem;
+        }
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+        .mole-graph-container {
+            width: 98vw;
+            max-width: 700px;
+            background: #424242;
+            border-radius: 24px;
+            box-shadow: 0 4px 32px #795548cc;
+            padding: 2rem 1rem 3.5rem 1rem;
+            margin-bottom: 2rem;
+            height: 400px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        .mole-graph-container canvas {
+            margin-top: 10px;
+        }
+        .section-title {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 1.3rem;
+            color: #795548;
+            margin: 1.2rem 0 0.5rem 0;
+        }
+        .section-text {
+            font-size: 1.05rem;
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
+        .accordion { width: 98vw; max-width: 700px; margin: 0 auto 2rem auto; background: #424242; border-radius: 20px; box-shadow: 0 2px 8px #79554888; overflow: hidden; }
+        .accordion-header { cursor: pointer; padding: 1.2rem 2rem; font-size: 1.2rem; font-weight: 600; background: #795548; color: #fff; border: none; outline: none; transition: background 0.2s; }
+        .accordion-header:hover { background: #8D6E63; }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; background: #424242; padding: 0 2rem; }
+        .accordion-content.open { padding: 1.5rem 2rem; max-height: 600px; }
+        .chart-filters { 
+            display: flex; gap: 1rem; justify-content: flex-end; margin-bottom: 1rem; 
+            position: absolute; right: 2.5rem; top: 0.5rem; z-index: 2;
+        }
+        .chart-filter-btn { background: #795548; color: #fff; border: none; border-radius: 8px; padding: 0.5rem 1.2rem; font-weight: 600; cursor: pointer; transition: background 0.2s; font-size: 1rem; }
+        .chart-filter-btn.active, .chart-filter-btn:hover { background: #8D6E63; }
+    </style>
+</head>
+<body>
+    <a href="pets.html" class="back-btn" style="position:absolute;left:32px;top:32px;z-index:10;text-decoration:none;background:#795548;color:#fff;padding:0.7em 1.5em;border-radius:12px;font-weight:600;box-shadow:0 2px 8px #0002;transition:background 0.2s;">← Back to Pets</a>
+    <div class="mole-detail-container">
+        <img src="assets/pets/Mole.png" alt="Mole" class="mole-icon">
+        <div class="mole-title">Mole</div>
+        <div class="mole-stats">
+            <div class="stat-block">
+                <div class="stat-label">Estimated Existing</div>
+                <div class="stat-value">5.2M</div>
+            </div>
+            <div class="stat-block">
+                <div class="stat-label">Current Price</div>
+                <div class="stat-value">25M</div>
+            </div>
+            <div class="stat-block">
+                <div class="stat-label">Trend</div>
+                <div class="stat-value" style="color:#4caf50;">Stable</div>
+            </div>
+            <div class="stat-block">
+                <div class="stat-label">Last Available</div>
+                <div class="stat-value">Still Available</div>
+            </div>
+        </div>
+        <div class="mole-graph-container">
+            <div class="chart-filters">
+                <button class="chart-filter-btn active" onclick="setChartRange('week', this)">Past Week</button>
+                <button class="chart-filter-btn" onclick="setChartRange('month', this)">Past Month</button>
+                <button class="chart-filter-btn" onclick="setChartRange('all', this)">All Time</button>
+            </div>
+            <canvas id="molePriceChart"></canvas>
+        </div>
+        <div class="accordion">
+            <button class="accordion-header" onclick="toggleAccordion(this)">More Info & Description</button>
+            <div class="accordion-content">
+                <div class="section-title">How to Obtain</div>
+                <div class="section-text">The Mole is a Common pet that was added in the Underground Update. It can be obtained by completing the Mole's Tunnel quest or by finding it randomly while digging in your garden.</div>
+                <div class="section-title">Appearance</div>
+                <div class="section-text">The Mole has a soft gray-brown fur coat with a pink snout and small black eyes. It has large front paws adapted for digging and a short tail.</div>
+                <div class="section-title">Trait</div>
+                <div class="section-text">Every 15 minutes, the Mole will dig up a random seed from the ground and add it to your inventory. The seed's rarity is based on the Mole's level.</div>
+                <div class="section-title">Pros & Cons</div>
+                <div class="section-text"><b>Pros:</b><br>- Can help you get rare seeds<br>- Short cooldown between digs<br>- Easy to obtain</div>
+                <div class="section-text"><b>Cons:</b><br>- Random seed selection<br>- Requires leveling up for better seeds<br>- Worth 0 sheckles when sold</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Mole price history data
+        const allData = {
+            labels: [
+                '2025-05-10', '2025-05-11', '2025-05-12', '2025-05-13', '2025-05-14',
+                '2025-05-15', '2025-05-16', '2025-05-17', '2025-05-18', '2025-05-19',
+                '2025-05-20', '2025-05-21', '2025-05-22'
+            ],
+            data: [
+                20000000, 22000000, 24000000, 23000000, 25000000,
+                24000000, 23000000, 25000000, 24000000, 25000000,
+                24000000, 25000000, 25000000
+            ]
+        };
+
+        function getRangeData(range) {
+            const numLabels = allData.labels.length;
+            let filteredLabels = allData.labels;
+            let filteredData = allData.data;
+            
+            if (range === 'week' || range === 'month') {
+                const today = new Date();
+                const days = range === 'week' ? 7 : 30;
+                const filtered = allData.labels.map((label, i) => {
+                    const date = new Date(label);
+                    if (isNaN(date)) return null;
+                    const diff = (today - date) / (1000 * 60 * 60 * 24);
+                    return diff <= days ? { label, data: allData.data[i] } : null;
+                }).filter(Boolean);
+                filteredLabels = filtered.map(d => d.label);
+                filteredData = filtered.map(d => d.data);
+            }
+            return {
+                labels: filteredLabels,
+                data: filteredData
+            };
+        }
+        let chart;
+        function renderChart(range) {
+            const {labels, data} = getRangeData(range);
+            const ctx = document.getElementById('molePriceChart').getContext('2d');
+            if (chart) chart.destroy();
+            
+            const minValue = Math.min(...data);
+            const paddedMin = Math.max(0, minValue - minValue * 0.15);
+            
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Mole Price',
+                        data,
+                        borderColor: '#795548',
+                        backgroundColor: 'rgba(121,85,72,0.1)',
+                        pointRadius: 0,
+                        tension: 0.4,
+                        pointHoverRadius: 6,
+                        pointHoverBackgroundColor: '#795548',
+                        pointHoverBorderColor: '#fff',
+                        pointHoverBorderWidth: 2,
+                        pointHitRadius: 20
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    onHover: (event, elements) => {
+                        event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(255,255,255,0.95)',
+                            titleColor: '#424242',
+                            bodyColor: '#424242',
+                            borderColor: '#795548',
+                            borderWidth: 1,
+                            padding: 12,
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    const date = tooltipItems[0].label;
+                                    if (date === 'Now') return 'Current';
+                                    const d = new Date(date);
+                                    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                                },
+                                label: function(context) {
+                                    const value = context.raw;
+                                    let formattedValue;
+                                    if (value >= 1e9) formattedValue = (value/1e9).toFixed(1)+"B";
+                                    else if (value >= 1e6) formattedValue = (value/1e6).toFixed(1)+"M";
+                                    else if (value >= 1e3) formattedValue = (value/1e3).toFixed(1)+"K";
+                                    else formattedValue = value;
+                                    return `Price: ${formattedValue}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'category',
+                            ticks: {
+                                display: false
+                            },
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            beginAtZero: false,
+                            ticks: {
+                                callback: function(value) {
+                                    if (value >= 1e9) return (value/1e9).toFixed(1)+"B";
+                                    if (value >= 1e6) return (value/1e6).toFixed(1)+"M";
+                                    if (value >= 1e3) return (value/1e3).toFixed(1)+"K";
+                                    return value;
+                                },
+                                padding: 10
+                            },
+                            grid: {
+                                color: 'rgba(121,85,72,0.15)'
+                            },
+                            min: paddedMin
+                        }
+                    }
+                }
+            });
+        }
+        function setChartRange(range, btn) {
+            document.querySelectorAll('.chart-filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderChart(range);
+        }
+        // Initial chart
+        renderChart('all');
+        // Accordion logic
+        function toggleAccordion(btn) {
+            const content = btn.nextElementSibling;
+            content.classList.toggle('open');
+            if(content.classList.contains('open')) {
+                content.style.maxHeight = content.scrollHeight + 'px';
+            } else {
+                content.style.maxHeight = null;
+            }
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Night Owl - Grow a Garden Price History</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .nightowl-detail-container {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding-bottom: 3rem;
+        }
+        .nightowl-icon {
+            width: 110px;
+            height: 110px;
+            border-radius: 24px;
+            box-shadow: 0 4px 32px #a259ff99, 0 0 0 8px #1e3c72;
+            background: #fff3;
+            margin: 2rem 0 1rem 0;
+            object-fit: contain;
+        }
+        .nightowl-title {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 2.2rem;
+            color: #e3e6ff;
+            text-shadow: 2px 2px 0 #1a237e, 0 4px 12px #a259ff88;
+            margin-bottom: 0.5rem;
+        }
+        .nightowl-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        .stat-block {
+            background: #232b4a;
+            border-radius: 16px;
+            box-shadow: 0 2px 16px #a259ff88;
+            padding: 1.2rem 2rem;
+            min-width: 140px;
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 1rem;
+            color: #a259ff;
+            margin-bottom: 0.3rem;
+        }
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #e3e6ff;
+        }
+        .nightowl-graph-container {
+            width: 98vw;
+            max-width: 700px;
+            background: #232b4a;
+            border-radius: 24px;
+            box-shadow: 0 4px 32px #a259ffcc;
+            padding: 2rem 1rem 3.5rem 1rem;
+            margin-bottom: 2rem;
+            height: 400px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        .nightowl-graph-container canvas {
+            margin-top: 10px;
+        }
+        .section-title {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 1.3rem;
+            color: #a259ff;
+            margin: 1.2rem 0 0.5rem 0;
+        }
+        .section-text {
+            font-size: 1.05rem;
+            color: #e3e6ff;
+            margin-bottom: 1rem;
+        }
+        .accordion { width: 98vw; max-width: 700px; margin: 0 auto 2rem auto; background: #232b4a; border-radius: 20px; box-shadow: 0 2px 8px #a259ff88; overflow: hidden; }
+        .accordion-header { cursor: pointer; padding: 1.2rem 2rem; font-size: 1.2rem; font-weight: 600; background: #a259ff; color: #fff; border: none; outline: none; transition: background 0.2s; }
+        .accordion-header:hover { background: #1e3c72; }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; background: #232b4a; padding: 0 2rem; }
+        .accordion-content.open { padding: 1.5rem 2rem; max-height: 600px; }
+        .timeline-container {
+            min-width: 120px;
+            margin-left: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            background: #232b4a;
+            border-radius: 16px;
+            box-shadow: 0 2px 16px #a259ff88;
+            padding: 1.2rem 1.2rem 1.2rem 1.5rem;
+            color: #e3e6ff;
+            font-size: 1rem;
+            height: 100%;
+        }
+        .timeline-title {
+            font-family: 'Luckiest Guy', cursive;
+            color: #a259ff;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        .timeline-event {
+            margin-bottom: 1.1rem;
+            position: relative;
+            padding-left: 1.2em;
+        }
+        .timeline-dot {
+            display: inline-block;
+            width: 0.8em;
+            height: 0.8em;
+            border-radius: 50%;
+            margin-right: 0.5em;
+            box-shadow: 0 0 8px #a259ff99;
+            vertical-align: middle;
+        }
+        .timeline-price {
+            color: #a259ff;
+            font-weight: bold;
+            font-size: 1.05em;
+            margin-left: 0.2em;
+        }
+        .chart-filters { 
+            display: flex; gap: 1rem; justify-content: flex-end; margin-bottom: 1rem; 
+            position: absolute; right: 2.5rem; top: 2.2rem; z-index: 2;
+        }
+        .chart-filter-btn { background: #a259ff; color: #fff; border: none; border-radius: 8px; padding: 0.5rem 1.2rem; font-weight: 600; cursor: pointer; transition: background 0.2s; font-size: 1rem; }
+        .chart-filter-btn.active, .chart-filter-btn:hover { background: #232b4a; color: #a259ff; }
+    </style>
+</head>
+<body>
+    <a href="pets.html" class="back-btn" style="position:absolute;left:32px;top:32px;z-index:10;text-decoration:none;background:#a259ff;color:#fff;padding:0.7em 1.5em;border-radius:12px;font-weight:600;box-shadow:0 2px 8px #0002;transition:background 0.2s;">← Back to Pets</a>
+    <div class="nightowl-detail-container">
+        <img src="assets/pets/Nightowl.png" alt="Night Owl" class="nightowl-icon">
+        <div class="nightowl-title">Night Owl</div>
+        <div class="nightowl-stats">
+            <div class="stat-block">
+                <div class="stat-label">Estimated Existing</div>
+                <div class="stat-value">1.9M</div>
+            </div>
+            <div class="stat-block">
+                <div class="stat-label">Current Price</div>
+                <div class="stat-value">300M</div>
+            </div>
+            <div class="stat-block">
+                <div class="stat-label">Trend</div>
+                <div class="stat-value" style="color:#e53935;">Falling</div>
+            </div>
+            <div class="stat-block">
+                <div class="stat-label">Last Available</div>
+                <div class="stat-value">Still Available</div>
+            </div>
+        </div>
+        <div class="nightowl-graph-container">
+            <div class="chart-filters">
+                <button class="chart-filter-btn active" onclick="setChartRange('week', this)">Past Week</button>
+                <button class="chart-filter-btn" onclick="setChartRange('month', this)">Past Month</button>
+                <button class="chart-filter-btn" onclick="setChartRange('all', this)">All Time</button>
+            </div>
+            <canvas id="nightOwlPriceChart"></canvas>
+        </div>
+        <div class="accordion">
+            <button class="accordion-header" onclick="toggleAccordion(this)">More Info & Description</button>
+            <div class="accordion-content">
+                <div class="section-title">How to Obtain</div>
+                <div class="section-text">The Night Owl is a Divine pet added in the Animal Update. It can be obtained by hatching the Night Egg with a 4% chance. The egg itself can be obtained by giving Moonlit fruits to the Wise Old Bird, by buying a Night Egg during the Blood Moon Event for 25,000,000 Sheckles or by buying 1 Divine Night Egg for 199 Robux, making it a Rare pet.</div>
+                <div class="section-title">Trait</div>
+                <div class="section-text">Every second all active pets gain an additional 0.22~0.26 XP/s!</div>
+                <div class="section-title">Pros & Cons</div>
+                <div class="section-text"><b>Pros:</b><br>- Unique Divine pet<br>- Boosts XP gain for all active pets<br>- Limited event availability<br></div>
+                <div class="section-text"><b>Cons:</b><br>- A ton are around and relatively easy to get.</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Night Owl price history data
+        const allData = {
+            labels: (() => {
+                const base = ['2025-05-10','2025-05-11','2025-05-12','2025-05-15'];
+                const today = new Date();
+                const lastDate = new Date('2025-05-15');
+                const labels = [...base];
+                let prev = 2000000000;
+                while (lastDate < today) {
+                    lastDate.setDate(lastDate.getDate() + 1);
+                    if (lastDate > today) break;
+                    labels.push(lastDate.toISOString().slice(0,10));
+                }
+                labels.push('Now');
+                return labels;
+            })(),
+            data: (() => {
+                const base = [30000000000, 6200000000, 5500000000, 2000000000];
+                const today = new Date();
+                const lastDate = new Date('2025-05-15');
+                const arr = [...base];
+                let prev = 2000000000;
+                while (lastDate < today) {
+                    lastDate.setDate(lastDate.getDate() + 1);
+                    if (lastDate > today) break;
+                    prev = prev - (1700000000 / (Math.max(1, (today - new Date('2025-05-15'))/(1000*60*60*24))));
+                    arr.push(Math.max(300000000, prev));
+                }
+                arr.push(300000000);
+                return arr;
+            })()
+        };
+
+        function getRangeData(range) {
+            const numLabels = allData.labels.length;
+            if (range === 'week') {
+                return {
+                    labels: allData.labels.slice(Math.max(0, numLabels - 7)),
+                    data: allData.data.slice(Math.max(0, numLabels - 7))
+                };
+            } else if (range === 'month') {
+                const monthPoints = Math.min(numLabels, 30);
+                return {
+                    labels: allData.labels.slice(Math.max(0, numLabels - monthPoints)),
+                    data: allData.data.slice(Math.max(0, numLabels - monthPoints))
+                };
+            } else { // 'all'
+                return allData;
+            }
+        }
+        let chart;
+        function renderChart(range) {
+            const {labels, data} = getRangeData(range);
+            const ctx = document.getElementById('nightOwlPriceChart').getContext('2d');
+            if (chart) chart.destroy();
+            // Calculate min value for y-axis padding
+            const minValue = Math.min(...data);
+            const paddedMin = Math.max(0, minValue - minValue * 0.15);
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Night Owl Price',
+                        data,
+                        borderColor: '#a259ff',
+                        backgroundColor: 'rgba(162,89,255,0.1)',
+                        pointRadius: 0,
+                        tension: 0.4,
+                        pointHoverRadius: 6,
+                        pointHoverBackgroundColor: '#a259ff',
+                        pointHoverBorderColor: '#fff',
+                        pointHoverBorderWidth: 2,
+                        pointHitRadius: 20
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    onHover: (event, elements) => {
+                        event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
+                    },
+                    onClick: (event, elements) => {
+                        if (elements.length) {
+                            const index = elements[0].index;
+                            const date = chart.data.labels[index];
+                            const price = chart.data.datasets[0].data[index];
+                            // You could add additional interaction here if needed
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(255,255,255,0.95)',
+                            titleColor: '#1e3c72',
+                            bodyColor: '#1e3c72',
+                            borderColor: '#a259ff',
+                            borderWidth: 1,
+                            padding: 12,
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    const date = tooltipItems[0].label;
+                                    if (date === 'Now') return 'Current';
+                                    const d = new Date(date);
+                                    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                                },
+                                label: function(context) {
+                                    const value = context.raw;
+                                    let formattedValue;
+                                    if (value >= 1e9) formattedValue = (value/1e9).toFixed(1)+"B";
+                                    else if (value >= 1e6) formattedValue = (value/1e6).toFixed(1)+"M";
+                                    else if (value >= 1e3) formattedValue = (value/1e3).toFixed(1)+"K";
+                                    else formattedValue = value;
+                                    return `Price: ${formattedValue}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'category',
+                            ticks: {
+                                display: false // Hide x-axis labels
+                            },
+                            grid: {
+                                display: false // Hide vertical grid lines
+                            }
+                        },
+                        y: {
+                            beginAtZero: false,
+                            ticks: {
+                                callback: function(value) {
+                                    if (value >= 1e9) return (value/1e9).toFixed(1)+"B";
+                                    if (value >= 1e6) return (value/1e6).toFixed(1)+"M";
+                                    if (value >= 1e3) return (value/1e3).toFixed(1)+"K";
+                                    return value;
+                                },
+                                padding: 10 // Add padding to prevent label cutoff
+                            },
+                            grid: {
+                                color: 'rgba(162,89,255,0.15)'
+                            },
+                            min: paddedMin // Set calculated min for padding
+                        }
+                    }
+                }
+            });
+        }
+        function setChartRange(range, btn) {
+            document.querySelectorAll('.chart-filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderChart(range);
+        }
+        // Initial chart
+        renderChart('all');
+        // Accordion logic
+        function toggleAccordion(btn) {
+            const content = btn.nextElementSibling;
+            content.classList.toggle('open');
+            if(content.classList.contains('open')) {
+                content.style.maxHeight = content.scrollHeight + 'px';
+            } else {
+                content.style.maxHeight = null;
+            }
+        }
+    </script>
+</body>
+</html> 

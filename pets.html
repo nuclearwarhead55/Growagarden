@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pets - Grow a Garden Price History</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { background: linear-gradient(135deg, #b6e388 0%, #6dc47c 100%); }
+        .pets-container { max-width: 900px; margin: 0 auto; padding: 3rem 1rem; }
+        .pets-title { font-family: 'Luckiest Guy', cursive; font-size: 2.5rem; color: #2e5d34; margin-bottom: 2rem; text-align: center; }
+        .pet-list { display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; }
+        .pet-card { background: #fff; border-radius: 24px; box-shadow: 0 4px 16px #0002; padding: 2rem 1.5rem; display: flex; flex-direction: column; align-items: center; width: 260px; transition: transform 0.2s, box-shadow 0.2s; text-decoration: none; color: #2e5d34; }
+        .pet-card:hover { transform: translateY(-6px) scale(1.04); box-shadow: 0 8px 32px #0003; }
+        .pet-card img { width: 90px; height: 90px; object-fit: contain; margin-bottom: 1rem; border-radius: 16px; background: #e7f7d7; }
+        .pet-card .pet-name { font-family: 'Luckiest Guy', cursive; font-size: 1.4rem; margin-bottom: 0.5rem; }
+        .pet-card .pet-link { display: inline-block; margin-top: 1rem; padding: 0.5rem 1.2rem; background: #2196F3; color: #fff; border-radius: 12px; font-weight: 600; text-decoration: none; transition: background 0.2s; }
+        .pet-card .pet-link:hover { background: #4CAF50; }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-btn" style="position:absolute;left:32px;top:32px;z-index:10;text-decoration:none;background:#2196F3;color:#fff;padding:0.7em 1.5em;border-radius:12px;font-weight:600;box-shadow:0 2px 8px #0002;transition:background 0.2s;">← Back to Home</a>
+    <div class="pets-container">
+        <div class="pets-title">Pets</div>
+        <div class="pet-list">
+            <div class="pet-card">
+                <img src="assets/pets/Nightowl.png" alt="Night Owl">
+                <div class="pet-name" style="color:#1a237e;">Night Owl</div>
+                <a class="pet-link" href="night-owl.html">View Details</a>
+            </div>
+            <div class="pet-card">
+                <img src="assets/pets/Raccoon.png" alt="Raccoon">
+                <div class="pet-name" style="color:#111;">Raccoon</div>
+                <a class="pet-link" href="raccoon.html">View Details</a>
+            </div>
+            <div class="pet-card">
+                <img src="assets/pets/BloodOwl.png" alt="Blood Owl">
+                <div class="pet-name" style="color:#d32f2f;">Blood Owl</div>
+                <a class="pet-link" href="blood-owl.html">View Details</a>
+            </div>
+            <div class="pet-card">
+                <img src="assets/pets/Owl.png" alt="Owl">
+                <div class="pet-name" style="color:#81d4fa;">Owl</div>
+                <a class="pet-link" href="owl.html">View Details</a>
+            </div>
+            <div class="pet-card">
+                <img src="assets/pets/EchoFrog.png" alt="Echo Frog">
+                <div class="pet-name" style="color:#1976d2; background: linear-gradient(90deg, #1976d2 60%, #81d4fa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Echo Frog</div>
+                <a class="pet-link" href="echo-frog.html">View Details</a>
+            </div>
+            <div class="pet-card">
+                <img src="assets/pets/ChickenZombie.png" alt="Chicken Zombie">
+                <div class="pet-name" style="background: linear-gradient(90deg, #fff176 0%, #d32f2f 50%, #81c784 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Chicken Zombie</div>
+                <div style="font-size:1rem;color:#a86c2c;margin-bottom:1rem;">Unobtainable</div>
+                <a class="pet-link" href="chicken-zombie.html">View Details</a>
+            </div>
+            <div class="pet-card">
+                <img src="assets/pets/BloodKiwi.png" alt="Blood Kiwi">
+                <div class="pet-name" style="color:#d32f2f;">Blood Kiwi</div>
+                <a class="pet-link" href="blood-kiwi.html">View Details</a>
+            </div>
+            <div class="pet-card">
+                <img src="assets/pets/BloodHedgehog.png" alt="Blood Hedgehog">
+                <div class="pet-name" style="color:#d32f2f;">Blood Hedgehog</div>
+                <a class="pet-link" href="blood-hedgehog.html">View Details</a>
+            </div>
+            <div class="pet-card">
+                <img src="assets/pets/Panda.png" alt="Panda">
+                <div class="pet-name" style="background: linear-gradient(90deg, #bdbdbd 0%, #111 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Panda</div>
+                <div style="font-size:1rem;color:#a86c2c;margin-bottom:1rem;">Unobtainable</div>
+                <a class="pet-link" href="panda.html">View Details</a>
+            </div>
+            <div class="pet-card">
+                <img src="assets/pets/Frog.png" alt="Frog">
+                <div class="pet-name" style="color:#388e3c;">Frog</div>
+                <a class="pet-link" href="frog.html">View Details</a>
+            </div>
+            <div class="pet-card">
+                <img src="assets/pets/Kiwi.png" alt="Kiwi">
+                <div class="pet-name" style="color:#fbc02d; background: linear-gradient(90deg, #8d6e63 60%, #fbc02d 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Kiwi</div>
+                <a class="pet-link" href="kiwi.html">View Details</a>
+            </div>
+            <div class="pet-card">
+                <img src="assets/pets/Hedgehog.png" alt="Hedgehog">
+                <div class="pet-name" style="color:#8d6e63;">Hedgehog</div>
+                <a class="pet-link" href="hedgehog.html">View Details</a>
+            </div>
+            <div class="pet-card">
+                <img src="assets/pets/GoldDragonfly.png" alt="Gold Dragonfly">
+                <div class="pet-name" style="color:#ffd600;">Gold Dragonfly</div>
+                <a class="pet-link" href="gold-dragonfly.html">View Details</a>
+            </div>
+            <div class="pet-card">
+                <img src="assets/pets/Mole.png" alt="Mole">
+                <div class="pet-name" style="color:#757575;">Mole</div>
+                <a class="pet-link" href="mole.html">View Details</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

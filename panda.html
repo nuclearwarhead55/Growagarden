@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panda - Grow a Garden Price History</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.1.0/dist/chartjs-plugin-annotation.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #000000 0%, #333333 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .panda-detail-container {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding-bottom: 3rem;
+        }
+        .panda-icon {
+            width: 110px;
+            height: 110px;
+            border-radius: 24px;
+            box-shadow: 0 4px 32px #ffffff99, 0 0 0 8px #000000;
+            background: #fff3;
+            margin: 2rem 0 1rem 0;
+            object-fit: contain;
+        }
+        .panda-title {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 2.2rem;
+            color: #ffffff;
+            text-shadow: 2px 2px 0 #000000, 0 4px 12px #ffffff88;
+            margin-bottom: 0.5rem;
+        }
+        .panda-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        .stat-block {
+            background: #000000;
+            border-radius: 16px;
+            box-shadow: 0 2px 16px #ffffff88;
+            padding: 1.2rem 2rem;
+            min-width: 140px;
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 1rem;
+            color: #cccccc;
+            margin-bottom: 0.3rem;
+        }
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+        .panda-graph-container {
+            width: 98vw;
+            max-width: 700px;
+            background: #000000;
+            border-radius: 24px;
+            box-shadow: 0 4px 32px #ffffffcc;
+            padding: 2rem 1rem 3.5rem 1rem;
+            margin-bottom: 2rem;
+            height: 400px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        .panda-graph-container canvas {
+            margin-top: 10px;
+        }
+        .section-title {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 1.3rem;
+            color: #cccccc;
+            margin: 1.2rem 0 0.5rem 0;
+        }
+        .section-text {
+            font-size: 1.05rem;
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
+        .accordion { width: 98vw; max-width: 700px; margin: 0 auto 2rem auto; background: #000000; border-radius: 20px; box-shadow: 0 2px 8px #ffffff88; overflow: hidden; }
+        .accordion-header { cursor: pointer; padding: 1.2rem 2rem; font-size: 1.2rem; font-weight: 600; background: #cccccc; color: #000000; border: none; outline: none; transition: background 0.2s; }
+        .accordion-header:hover { background: #ffffff; }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; background: #000000; padding: 0 2rem; }
+        .accordion-content.open { padding: 1.5rem 2rem; max-height: 600px; }
+        .chart-filters { 
+            display: flex; gap: 1rem; justify-content: flex-end; margin-bottom: 1rem; 
+            position: absolute; right: 2.5rem; top: 0.5rem; z-index: 2;
+        }
+        .chart-filter-btn { background: #cccccc; color: #000000; border: none; border-radius: 8px; padding: 0.5rem 1.2rem; font-weight: 600; cursor: pointer; transition: background 0.2s; font-size: 1rem; }
+        .chart-filter-btn.active, .chart-filter-btn:hover { background: #ffffff; }
+    </style>
+</head>
+<body>
+    <a href="pets.html" class="back-btn" style="position:absolute;left:32px;top:32px;z-index:10;text-decoration:none;background:#cccccc;color:#000000;padding:0.7em 1.5em;border-radius:12px;font-weight:600;box-shadow:0 2px 8px #0002;transition:background 0.2s;">← Back to Pets</a>
+    <div class="panda-detail-container">
+        <img src="assets/pets/Panda.png" alt="Panda" class="panda-icon">
+        <div class="panda-title">Panda</div>
+        <div class="panda-stats">
+            <div class="stat-block">
+                <div class="stat-label">Estimated Existing</div>
+                <div class="stat-value">3M</div>
+            </div>
+            <div class="stat-block">
+                <div class="stat-label">Current Price</div>
+                <div class="stat-value">2B</div>
+            </div>
+            <div class="stat-block">
+                <div class="stat-label">Trend</div>
+                <div class="stat-value" style="color:#4caf50;">Rising</div>
+            </div>
+            <div class="stat-block">
+                <div class="stat-label">Last Available</div>
+                <div class="stat-value">May 3rd, 2025</div>
+            </div>
+        </div>
+        <div class="panda-graph-container">
+            <div class="chart-filters">
+                <button class="chart-filter-btn active" onclick="setChartRange('week', this)">Past Week</button>
+                <button class="chart-filter-btn" onclick="setChartRange('month', this)">Past Month</button>
+                <button class="chart-filter-btn" onclick="setChartRange('all', this)">All Time</button>
+            </div>
+            <canvas id="pandaPriceChart"></canvas>
+        </div>
+        <div class="accordion">
+            <button class="accordion-header" onclick="toggleAccordion(this)">More Info & Description</button>
+            <div class="accordion-content">
+                <div class="section-title">How to Obtain</div>
+                <div class="section-text">The Panda is a Legendary pet that was added in the Animal Update (Update 1.04.0). It was free to claim during the first hour of the event on May 3rd, 2025. It is no longer obtainable.</div>
+                <div class="section-title">Appearance</div>
+                <div class="section-text">The Panda is white with black stripes around its eyes, a black tail, black feet, and a pair of black ears. It will occasionally sit down every ~20 seconds.</div>
+                <div class="section-title">Trait</div>
+                <div class="section-text">Every ~3 minutes, the Panda goes to a bamboo in the garden and eats it, immediately selling it for a ~1.5x value increase. The player still receives the money after the Panda eats the bamboo. If your garden has no bamboo, the Panda will walk around your garden aimlessly.<br><br>
+                Note: The Panda cannot recognize mutations, so it will sell your Rainbow, Shocked, Frozen, Moonlit, Bamboo for their base value.</div>
+                <div class="section-title">Pros & Cons</div>
+                <div class="section-text"><b>Pros:</b><br>- Can earn you extra money on your bamboo<br>- Gets rid of the inconvenience of needing to walk to the seller to sell your bamboo</div>
+                <div class="section-text"><b>Cons:</b><br>- No longer obtainable<br>- Requires bamboo in your garden to be useful<br>- Cannot recognize bamboo mutations<br>- Worth 0 sheckles when sold</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Panda price history data
+        const allData = {
+            labels: (() => {
+                const base = ['2025-05-03','2025-05-10','2025-05-14','2025-05-19'];
+                const today = new Date();
+                const lastDate = new Date('2025-05-19');
+                const labels = [...base];
+                while (lastDate < today) {
+                    lastDate.setDate(lastDate.getDate() + 1);
+                    if (lastDate > today) break;
+                    labels.push(lastDate.toISOString().slice(0,10));
+                }
+                labels.push('Now');
+                return labels;
+            })(),
+            data: (() => {
+                const base = [10000, 2000000, 20000000, 260000000];
+                const today = new Date();
+                const lastDate = new Date('2025-05-19');
+                const arr = [...base];
+                let prev = 260000000;
+                while (lastDate < today) {
+                    lastDate.setDate(lastDate.getDate() + 1);
+                    if (lastDate > today) break;
+                    prev = prev * 1.1; // 10% increase each day
+                    arr.push(Math.min(2000000000, prev));
+                }
+                arr.push(2000000000);
+                return arr;
+            })()
+        };
+
+        function getRangeData(range) {
+            const numLabels = allData.labels.length;
+            const unobtainableIndex = allData.labels.indexOf('2025-05-03');
+            let filteredLabels = allData.labels;
+            let filteredData = allData.data;
+            
+            if (range === 'week' || range === 'month') {
+                const today = new Date();
+                const days = range === 'week' ? 7 : 30;
+                // Exclude 'Now' for date filtering
+                const dateLabels = allData.labels.slice(0, -1);
+                const dateData = allData.data.slice(0, -1);
+                const filtered = dateLabels.map((label, i) => {
+                    const date = new Date(label);
+                    if (isNaN(date)) return null;
+                    const diff = (today - date) / (1000 * 60 * 60 * 24);
+                    return diff <= days ? { label, data: dateData[i] } : null;
+                }).filter(Boolean);
+                filteredLabels = filtered.map(d => d.label);
+                filteredData = filtered.map(d => d.data);
+                // Always include 'Now' as last point
+                filteredLabels.push('Now');
+                filteredData.push(allData.data[allData.data.length - 1]);
+            }
+            return {
+                labels: filteredLabels,
+                data: filteredData,
+                showAnnotation: unobtainableIndex >= 0 && filteredLabels.indexOf('2025-05-03') !== -1
+            };
+        }
+        let chart;
+        function renderChart(range) {
+            const {labels, data, showAnnotation} = getRangeData(range);
+            const ctx = document.getElementById('pandaPriceChart').getContext('2d');
+            if (chart) chart.destroy();
+            
+            // Calculate min value for y-axis padding
+            const minValue = Math.min(...data);
+            const paddedMin = Math.max(0, minValue - minValue * 0.15);
+            
+            const unobtainableIndex = labels.indexOf('2025-05-03');
+            
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Panda Price',
+                        data,
+                        borderColor: '#cccccc',
+                        backgroundColor: 'rgba(204,204,204,0.1)',
+                        pointRadius: 0,
+                        tension: 0.4,
+                        pointHoverRadius: 6,
+                        pointHoverBackgroundColor: '#cccccc',
+                        pointHoverBorderColor: '#fff',
+                        pointHoverBorderWidth: 2,
+                        pointHitRadius: 20
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    onHover: (event, elements) => {
+                        event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
+                    },
+                    onClick: (event, elements) => {
+                        if (elements.length) {
+                            const index = elements[0].index;
+                            const date = chart.data.labels[index];
+                            const price = chart.data.datasets[0].data[index];
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        annotation: {
+                            annotations: {
+                                unobtainableLine: {
+                                    type: 'line',
+                                    xMin: unobtainableIndex,
+                                    xMax: unobtainableIndex,
+                                    borderColor: '#ff9800',
+                                    borderWidth: 2,
+                                    borderDash: [6, 6],
+                                    label: {
+                                        enabled: showAnnotation,
+                                        content: '!',
+                                        position: 'bottom',
+                                        backgroundColor: 'rgba(255, 152, 0, 0.8)',
+                                        color: '#fff',
+                                        font: { weight: 'bold', size: 14 },
+                                        yAdjust: 30,
+                                        padding: { top: 4, bottom: 2, left: 6, right: 6 },
+                                        borderRadius: 4,
+                                        callbacks: {
+                                            label: function(context) {
+                                                return 'Unobtainable';
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(255,255,255,0.95)',
+                            titleColor: '#000000',
+                            bodyColor: '#000000',
+                            borderColor: '#cccccc',
+                            borderWidth: 1,
+                            padding: 12,
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    const date = tooltipItems[0].label;
+                                    if (date === 'Now') return 'Current';
+                                    if (date === '2025-05-03') return 'Unobtainable';
+                                    const d = new Date(date);
+                                    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                                },
+                                label: function(context) {
+                                    const value = context.raw;
+                                    let formattedValue;
+                                    if (value >= 1e9) formattedValue = (value/1e9).toFixed(1)+"B";
+                                    else if (value >= 1e6) formattedValue = (value/1e6).toFixed(1)+"M";
+                                    else if (value >= 1e3) formattedValue = (value/1e3).toFixed(1)+"K";
+                                    else formattedValue = value;
+                                    return `Price: ${formattedValue}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'category',
+                            ticks: {
+                                display: false // Hide x-axis labels
+                            },
+                            grid: {
+                                display: false // Hide vertical grid lines
+                            },
+                            offset: true
+                        },
+                        y: {
+                            beginAtZero: false,
+                            ticks: {
+                                callback: function(value) {
+                                    if (value >= 1e9) return (value/1e9).toFixed(1)+"B";
+                                    if (value >= 1e6) return (value/1e6).toFixed(1)+"M";
+                                    if (value >= 1e3) return (value/1e3).toFixed(1)+"K";
+                                    return value;
+                                },
+                                padding: 10 // Add padding to prevent label cutoff
+                            },
+                            grid: {
+                                color: 'rgba(204,204,204,0.15)'
+                            },
+                            min: paddedMin // Set calculated min for padding
+                        }
+                    }
+                }
+            });
+        }
+        function setChartRange(range, btn) {
+            document.querySelectorAll('.chart-filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderChart(range);
+        }
+        // Initial chart
+        renderChart('all');
+        // Accordion logic
+        function toggleAccordion(btn) {
+            const content = btn.nextElementSibling;
+            content.classList.toggle('open');
+            if(content.classList.contains('open')) {
+                content.style.maxHeight = content.scrollHeight + 'px';
+            } else {
+                content.style.maxHeight = null;
+            }
+        }
+    </script>
+</body>
+</html> 

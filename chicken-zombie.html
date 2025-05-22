@@ -100,7 +100,7 @@
         .accordion-content.open { padding: 1.5rem 2rem; max-height: 600px; }
         .chart-filters { 
             display: flex; gap: 1rem; justify-content: flex-end; margin-bottom: 1rem; 
-            position: absolute; right: 2.5rem; top: 1rem; z-index: 2;
+            position: absolute; right: 2.5rem; top: 0.5rem; z-index: 2;
         }
         .chart-filter-btn { background: #ffcdd2; color: #b71c1c; border: none; border-radius: 8px; padding: 0.5rem 1.2rem; font-weight: 600; cursor: pointer; transition: background 0.2s; font-size: 1rem; }
         .chart-filter-btn.active, .chart-filter-btn:hover { background: #ef9a9a; }
@@ -131,11 +131,11 @@
             </div>
             <div class="stat-block">
                 <div class="stat-label">Current Price</div>
-                <div class="stat-value">20B</div>
+                <div class="stat-value">15B</div>
             </div>
             <div class="stat-block">
                 <div class="stat-label">Trend</div>
-                <div class="stat-value" style="color:#4caf50;">Rising</div>
+                <div class="stat-value" style="color:#4caf50;">Slow Up</div>
             </div>
             <div class="stat-block">
                 <div class="stat-label">Last Available</div>
@@ -184,18 +184,27 @@
                 return labels;
             })(),
             data: (() => {
-                const base = [8000000000, 15000000000];
+                const base = [8000000000, 8500000000];
                 const today = new Date();
                 const lastDate = new Date('2025-05-18');
+                const labels = [...base];
                 const arr = [...base];
-                let prev = 15000000000;
+                let prev = 8500000000;
+                let dayCount = 0;
                 while (lastDate < today) {
                     lastDate.setDate(lastDate.getDate() + 1);
                     if (lastDate > today) break;
-                    prev = prev * 1.05; // Reduced from 10% to 5% increase each day
-                    arr.push(Math.min(20000000000, prev));
+                    dayCount++;
+                    
+                    // Create a spike around May 20th
+                    if (dayCount === 2) { // May 20th
+                        prev = prev * 1.5; // 50% spike
+                    } else {
+                        prev = prev * 1.03; // 3% normal increase
+                    }
+                    arr.push(Math.min(15000000000, prev));
                 }
-                arr.push(20000000000);
+                arr.push(15000000000);
                 return arr;
             })()
         };

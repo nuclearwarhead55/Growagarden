@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Kiwi - Grow a Garden Price History</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #d32f2f 0%, #ffcdd2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .bloodkiwi-detail-container {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding-bottom: 3rem;
+        }
+        .bloodkiwi-icon {
+            width: 110px;
+            height: 110px;
+            border-radius: 24px;
+            box-shadow: 0 4px 32px #d32f2f99, 0 0 0 8px #b71c1c;
+            background: #fff3;
+            margin: 2rem 0 1rem 0;
+            object-fit: contain;
+        }
+        .bloodkiwi-title {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 2.2rem;
+            color: #ffebee;
+            text-shadow: 2px 2px 0 #b71c1c, 0 4px 12px #d32f2f88;
+            margin-bottom: 0.5rem;
+        }
+        .bloodkiwi-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        .stat-block {
+            background: #b71c1c;
+            border-radius: 16px;
+            box-shadow: 0 2px 16px #d32f2f88;
+            padding: 1.2rem 2rem;
+            min-width: 140px;
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 1rem;
+            color: #ffcdd2;
+            margin-bottom: 0.3rem;
+        }
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffebee;
+        }
+        .bloodkiwi-graph-container {
+            width: 98vw;
+            max-width: 700px;
+            background: #b71c1c;
+            border-radius: 24px;
+            box-shadow: 0 4px 32px #d32f2fcc;
+            padding: 2rem 1rem 3.5rem 1rem;
+            margin-bottom: 2rem;
+            height: 400px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        .bloodkiwi-graph-container canvas {
+            margin-top: 10px;
+        }
+        .section-title {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 1.3rem;
+            color: #ffcdd2;
+            margin: 1.2rem 0 0.5rem 0;
+        }
+        .section-text {
+            font-size: 1.05rem;
+            color: #ffebee;
+            margin-bottom: 1rem;
+        }
+        .accordion { width: 98vw; max-width: 700px; margin: 0 auto 2rem auto; background: #b71c1c; border-radius: 20px; box-shadow: 0 2px 8px #d32f2f88; overflow: hidden; }
+        .accordion-header { cursor: pointer; padding: 1.2rem 2rem; font-size: 1.2rem; font-weight: 600; background: #ffcdd2; color: #b71c1c; border: none; outline: none; transition: background 0.2s; }
+        .accordion-header:hover { background: #ef9a9a; }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; background: #b71c1c; padding: 0 2rem; }
+        .accordion-content.open { padding: 1.5rem 2rem; max-height: 600px; }
+        .chart-filters { 
+            display: flex; gap: 1rem; justify-content: flex-end; margin-bottom: 1rem; 
+            position: absolute; right: 2.5rem; top: 0.5rem; z-index: 2;
+        }
+        .chart-filter-btn { background: #ffcdd2; color: #b71c1c; border: none; border-radius: 8px; padding: 0.5rem 1.2rem; font-weight: 600; cursor: pointer; transition: background 0.2s; font-size: 1rem; }
+        .chart-filter-btn.active, .chart-filter-btn:hover { background: #ef9a9a; }
+    </style>
+</head>
+<body>
+    <a href="pets.html" class="back-btn" style="position:absolute;left:32px;top:32px;z-index:10;text-decoration:none;background:#ffcdd2;color:#b71c1c;padding:0.7em 1.5em;border-radius:12px;font-weight:600;box-shadow:0 2px 8px #0002;transition:background 0.2s;">← Back to Pets</a>
+    <div class="bloodkiwi-detail-container">
+        <img src="assets/pets/BloodKiwi.png" alt="Blood Kiwi" class="bloodkiwi-icon">
+        <div class="bloodkiwi-title">Blood Kiwi</div>
+        <div class="bloodkiwi-stats">
+            <div class="stat-block">
+                <div class="stat-label">Estimated Existing</div>
+                <div class="stat-value">20M</div>
+            </div>
+            <div class="stat-block">
+                <div class="stat-label">Current Price</div>
+                <div class="stat-value">6M</div>
+            </div>
+            <div class="stat-block">
+                <div class="stat-label">Trend</div>
+                <div class="stat-value" style="color:#e53935;">Falling</div>
+            </div>
+            <div class="stat-block">
+                <div class="stat-label">Last Available</div>
+                <div class="stat-value">Still Available</div>
+            </div>
+        </div>
+        <div class="bloodkiwi-graph-container">
+            <div class="chart-filters">
+                <button class="chart-filter-btn active" onclick="setChartRange('week', this)">Past Week</button>
+                <button class="chart-filter-btn" onclick="setChartRange('month', this)">Past Month</button>
+                <button class="chart-filter-btn" onclick="setChartRange('all', this)">All Time</button>
+            </div>
+            <canvas id="bloodKiwiPriceChart"></canvas>
+        </div>
+        <div class="accordion">
+            <button class="accordion-header" onclick="toggleAccordion(this)">More Info & Description</button>
+            <div class="accordion-content">
+                <div class="section-title">How to Obtain</div>
+                <div class="section-text">The Blood Kiwi is a Legendary Pet added in the Blood Moon Event update; one of the 9 pets added. It can be obtained in the Blood Moon Shop for 20,000,000 Sheckles, and is an alternative & better version of the Kiwi. It has 50,000 hunger.</div>
+                <div class="section-title">Appearance</div>
+                <div class="section-text">The Blood Kiwi is a recolor of the Kiwi. It has maroon fur, orange feet and an orange beak, as well as red pupils.</div>
+                <div class="section-title">Trait</div>
+                <div class="section-text">The Blood Kiwi's passive is to sit above the egg with the highest remaining hatch time, making the egg's hatch time decrease by 45 seconds every minute. It also increases its hatch speed by 20%.<br><br>
+                However, the Blood Kiwi will not do anything if there are no eggs on the player's plot or the eggs have no remaining time left, rendering it useless.<br><br>
+                Having multiple Blood Kiwis could cause you to almost triple the speed of egg growth if used correctly, so it is recommended to use one or more of these.</div>
+                <div class="section-title">Time Reduction Table</div>
+                <div class="section-text">
+                <b>Note:</b> These values are approximations based on experimental data. The formula used is player-derived and not officially confirmed by the game developers. Remember to multiply the time by the number of eggs you have put down.<br><br>
+                <table style="width:100%; border-collapse: collapse; margin: 1rem 0;">
+                    <tr style="background: rgba(255,255,255,0.1);">
+                        <th style="padding: 0.5rem; text-align: left;">Rarity</th>
+                        <th style="padding: 0.5rem; text-align: left;">Base Time</th>
+                        <th style="padding: 0.5rem; text-align: left;">K=1</th>
+                        <th style="padding: 0.5rem; text-align: left;">K=2</th>
+                        <th style="padding: 0.5rem; text-align: left;">K=3</th>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.5rem;">Common Egg</td>
+                        <td style="padding: 0.5rem;">10m</td>
+                        <td style="padding: 0.5rem;">5m</td>
+                        <td style="padding: 0.5rem;">3m</td>
+                        <td style="padding: 0.5rem;">2m</td>
+                    </tr>
+                    <tr style="background: rgba(255,255,255,0.1);">
+                        <td style="padding: 0.5rem;">Uncommon Egg</td>
+                        <td style="padding: 0.5rem;">20m</td>
+                        <td style="padding: 0.5rem;">10m</td>
+                        <td style="padding: 0.5rem;">6m</td>
+                        <td style="padding: 0.5rem;">4m</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.5rem;">Rare Egg</td>
+                        <td style="padding: 0.5rem;">2h</td>
+                        <td style="padding: 0.5rem;">1h 2m</td>
+                        <td style="padding: 0.5rem;">38m</td>
+                        <td style="padding: 0.5rem;">24m</td>
+                    </tr>
+                    <tr style="background: rgba(255,255,255,0.1);">
+                        <td style="padding: 0.5rem;">Legendary Egg</td>
+                        <td style="padding: 0.5rem;">4h</td>
+                        <td style="padding: 0.5rem;">2h 4m</td>
+                        <td style="padding: 0.5rem;">1h 16m</td>
+                        <td style="padding: 0.5rem;">48m</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.5rem;">Mythical Egg</td>
+                        <td style="padding: 0.5rem;">5h 7m</td>
+                        <td style="padding: 0.5rem;">2h 38m</td>
+                        <td style="padding: 0.5rem;">1h 37m</td>
+                        <td style="padding: 0.5rem;">1h 0m</td>
+                    </tr>
+                    <tr style="background: rgba(255,255,255,0.1);">
+                        <td style="padding: 0.5rem;">Bug Egg</td>
+                        <td style="padding: 0.5rem;">8h</td>
+                        <td style="padding: 0.5rem;">4h 11m</td>
+                        <td style="padding: 0.5rem;">2h 33m</td>
+                        <td style="padding: 0.5rem;">1h 36m</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.5rem;">Night Egg</td>
+                        <td style="padding: 0.5rem;">4h 10m</td>
+                        <td style="padding: 0.5rem;">2h 10m</td>
+                        <td style="padding: 0.5rem;">1h 19m</td>
+                        <td style="padding: 0.5rem;">49m</td>
+                    </tr>
+                </table>
+                </div>
+                <div class="section-title">Pros & Cons</div>
+                <div class="section-text"><b>Pros:</b><br>- Can reduce time taken incredibly to hatch an egg depending on how many kiwis the player has down<br>- High hunger capacity of 50,000<br>- Stackable effect with multiple Blood Kiwis</div>
+                <div class="section-text"><b>Cons:</b><br>- Useless without eggs on the plot<br>- No effect on eggs with no remaining time<br>- Expensive initial cost during events</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Blood Kiwi price history data
+        const allData = {
+            labels: (() => {
+                const base = ['2025-05-17','2025-05-18','2025-05-19'];
+                const today = new Date();
+                const lastDate = new Date('2025-05-19');
+                const labels = [...base];
+                while (lastDate < today) {
+                    lastDate.setDate(lastDate.getDate() + 1);
+                    if (lastDate > today) break;
+                    labels.push(lastDate.toISOString().slice(0,10));
+                }
+                labels.push('Now');
+                return labels;
+            })(),
+            data: (() => {
+                const base = [560000000, 300000000, 100000000];
+                const today = new Date();
+                const lastDate = new Date('2025-05-19');
+                const arr = [...base];
+                let prev = 100000000;
+                while (lastDate < today) {
+                    lastDate.setDate(lastDate.getDate() + 1);
+                    if (lastDate > today) break;
+                    prev = prev * 0.8; // 20% decrease each day
+                    arr.push(Math.max(6000000, prev));
+                }
+                arr.push(6000000);
+                return arr;
+            })()
+        };
+
+        function getRangeData(range) {
+            const numLabels = allData.labels.length;
+            if (range === 'week') {
+                return {
+                    labels: allData.labels.slice(Math.max(0, numLabels - 7)),
+                    data: allData.data.slice(Math.max(0, numLabels - 7))
+                };
+            } else if (range === 'month') {
+                const monthPoints = Math.min(numLabels, 30);
+                return {
+                    labels: allData.labels.slice(Math.max(0, numLabels - monthPoints)),
+                    data: allData.data.slice(Math.max(0, numLabels - monthPoints))
+                };
+            } else { // 'all'
+                return allData;
+            }
+        }
+        let chart;
+        function renderChart(range) {
+            const {labels, data} = getRangeData(range);
+            const ctx = document.getElementById('bloodKiwiPriceChart').getContext('2d');
+            if (chart) chart.destroy();
+            // Calculate min value for y-axis padding
+            const minValue = Math.min(...data);
+            const paddedMin = Math.max(0, minValue - minValue * 0.15);
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Blood Kiwi Price',
+                        data,
+                        borderColor: '#ffcdd2',
+                        backgroundColor: 'rgba(255,205,210,0.1)',
+                        pointRadius: 0,
+                        tension: 0.4,
+                        pointHoverRadius: 6,
+                        pointHoverBackgroundColor: '#ffcdd2',
+                        pointHoverBorderColor: '#fff',
+                        pointHoverBorderWidth: 2,
+                        pointHitRadius: 20
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    onHover: (event, elements) => {
+                        event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
+                    },
+                    onClick: (event, elements) => {
+                        if (elements.length) {
+                            const index = elements[0].index;
+                            const date = chart.data.labels[index];
+                            const price = chart.data.datasets[0].data[index];
+                            // You could add additional interaction here if needed
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(255,255,255,0.95)',
+                            titleColor: '#b71c1c',
+                            bodyColor: '#b71c1c',
+                            borderColor: '#ffcdd2',
+                            borderWidth: 1,
+                            padding: 12,
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    const date = tooltipItems[0].label;
+                                    if (date === 'Now') return 'Current';
+                                    const d = new Date(date);
+                                    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                                },
+                                label: function(context) {
+                                    const value = context.raw;
+                                    let formattedValue;
+                                    if (value >= 1e9) formattedValue = (value/1e9).toFixed(1)+"B";
+                                    else if (value >= 1e6) formattedValue = (value/1e6).toFixed(1)+"M";
+                                    else if (value >= 1e3) formattedValue = (value/1e3).toFixed(1)+"K";
+                                    else formattedValue = value;
+                                    return `Price: ${formattedValue}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'category',
+                            ticks: {
+                                display: false // Hide x-axis labels
+                            },
+                            grid: {
+                                display: false // Hide vertical grid lines
+                            }
+                        },
+                        y: {
+                            beginAtZero: false,
+                            ticks: {
+                                callback: function(value) {
+                                    if (value >= 1e9) return (value/1e9).toFixed(1)+"B";
+                                    if (value >= 1e6) return (value/1e6).toFixed(1)+"M";
+                                    if (value >= 1e3) return (value/1e3).toFixed(1)+"K";
+                                    return value;
+                                },
+                                padding: 10 // Add padding to prevent label cutoff
+                            },
+                            grid: {
+                                color: 'rgba(255,205,210,0.15)'
+                            },
+                            min: paddedMin // Set calculated min for padding
+                        }
+                    }
+                }
+            });
+        }
+        function setChartRange(range, btn) {
+            document.querySelectorAll('.chart-filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderChart(range);
+        }
+        // Initial chart
+        renderChart('all');
+        // Accordion logic
+        function toggleAccordion(btn) {
+            const content = btn.nextElementSibling;
+            content.classList.toggle('open');
+            if(content.classList.contains('open')) {
+                content.style.maxHeight = content.scrollHeight + 'px';
+            } else {
+                content.style.maxHeight = null;
+            }
+        }
+    </script>
+</body>
+</html> 

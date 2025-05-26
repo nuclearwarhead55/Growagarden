@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mutations - Grow a Garden Price History</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .mutations-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 1rem;
+            font-family: 'Inter', sans-serif;
+            color: #333;
+        }
+        .mutations-title {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 2.5rem;
+            color: #2e7d32;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .section-title {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 1.8rem;
+            color: #388e3c;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #a5d6a7;
+            padding-bottom: 0.5rem;
+        }
+        .subsection-title {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 1.4rem;
+            color: #4caf50;
+            margin-top: 1.5rem;
+            margin-bottom: 0.8rem;
+        }
+        p, li {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 0.8rem;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            margin-bottom: 1rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #a5d6a7;
+            padding: 0.75rem;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+        th {
+            background-color: #81c784;
+            color: #fff;
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 1rem;
+        }
+        tr:nth-child(even) {
+            background-color: #f1f8e9;
+        }
+        .formula-block {
+            background-color: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            border-left: 5px solid #4caf50;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.1rem;
+            overflow-x: auto;
+        }
+        .example-block {
+            background: #fff;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        }
+        .example-block .subsection-title {
+            margin-top: 0;
+            font-size: 1.2rem;
+        }
+        .back-btn-mutations {
+            display: inline-block;
+            position: absolute;
+            left: 32px;
+            top: 32px;
+            z-index: 10;
+            text-decoration: none;
+            background: #4CAF50; /* Green to match crops/general theme */
+            color: #fff;
+            padding: 0.7em 1.5em;
+            border-radius: 12px;
+            font-weight: 600;
+            box-shadow: 0 2px 8px #0002;
+            transition: background 0.2s;
+        }
+        .back-btn-mutations:hover {
+            background: #388e3c;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-btn-mutations">← Back to Home</a>
+    <div class="mutations-container">
+        <div class="mutations-title">Understanding Mutations</div>
+        <p>Mutations are unique visual transformations that enhance the value of crops, making them more visually distinctive and lucrative. These changes can be triggered by specific in-game conditions like weather, certain tools, or special seeds.</p>
+
+        <div class="section-title">Mutation Classes</div>
+        <div class="subsection-title">Environmental Mutations</div>
+        <p>Caused by external events or factors. Triggers include, but are not limited to:</p>
+        <ul>
+            <li>Weather conditions (e.g., thunderstorms, frost, disco)</li>
+            <li>Certain pets (e.g., Polar Bear)</li>
+            <li>Specific items (e.g., Chocolate Sprinkler)</li>
+        </ul>
+
+        <div class="subsection-title">Growth Mutations</div>
+        <p>Occur naturally during a crop's growth cycle or can be influenced by certain pets or items. These directly multiply the base value of the crop.</p>
+        <ul>
+            <li>Can be applied after the growth stage using a pet (i.e., Dragonfly for gold)</li>
+            <li>Chance can be enhanced or guaranteed by using special tools or from fruit growing on mutated plants.</li>
+        </ul>
+
+        <div class="section-title">Total Value Calculation</div>
+        <p>The total value of a mutated crop is calculated using the following formula:</p>
+        <div class="formula-block">
+            Total Value = Base Value × Growth Mutation × (1 + Σ Environmental Stacks)
+        </div>
+        <p>Where:</p>
+        <ul>
+            <li><strong>Base Value:</strong> The original value of the crop without any mutations.</li>
+            <li><strong>Growth Mutation:</strong> A multiplier from growth mutations (Golden or Rainbow), or 1 if no growth mutation is applied.</li>
+            <li><strong>Environmental Stacks:</strong> The sum of stack bonuses from all applied environmental mutations.</li>
+        </ul>
+
+        <div class="subsection-title">Growth Mutation Values</div>
+        <ul>
+            <li><strong>None:</strong> ×1 (no growth mutation)</li>
+            <li><strong>Golden:</strong> ×20</li>
+            <li><strong>Rainbow:</strong> ×50</li>
+        </ul>
+
+        <div class="subsection-title">Environmental Mutation Stack Bonuses</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Mutation Name</th>
+                    <th>Stack Bonus</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Wet</td><td>+1</td></tr>
+                <tr><td>Chilled</td><td>+1</td></tr>
+                <tr><td>Frozen</td><td>+9</td></tr>
+                <tr><td>Bloodlit</td><td>+3</td></tr>
+                <tr><td>Shocked</td><td>+99</td></tr>
+                <tr><td>Celestial</td><td>+119</td></tr>
+                <tr><td>Disco</td><td>+124</td></tr>
+                <tr><td>Chocolate</td><td>+1</td></tr>
+                <tr><td>Moonlit</td><td>+1</td></tr>
+                <tr><td>Zombified</td><td>+24</td></tr>
+            </tbody>
+        </table>
+        <p><strong>Stacking Restrictions:</strong></p>
+        <ul>
+            <li>Only one growth mutation (Golden or Rainbow) can be applied per crop.</li>
+            <li>Only one of Wet, Chilled, or Frozen can be applied (they are mutually exclusive).</li>
+            <li>Other environmental mutations can stack freely as long as they are not in conflicting categories.</li>
+        </ul>
+
+        <div class="section-title">Complete List of Mutations</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Mutation Name</th>
+                    <th>Type</th>
+                    <th>Effect (Multiplier / Stack Bonus)</th>
+                    <th>How to Obtain</th>
+                    <th>Visual Appearance</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Golden</td>
+                    <td>Growth</td>
+                    <td>×20 Base Value</td>
+                    <td>1% chance naturally, or influenced by Dragonfly buff.</td>
+                    <td>Plants with this mutation will appear as shining and golden in color.</td>
+                </tr>
+                <tr>
+                    <td>Rainbow</td>
+                    <td>Growth</td>
+                    <td>×50 Base Value</td>
+                    <td>0.1% chance naturally.</td>
+                    <td>Plants with this mutation will continuously change colours.</td>
+                </tr>
+                <tr>
+                    <td>Wet</td>
+                    <td>Environmental</td>
+                    <td>+1 Stack</td>
+                    <td>Chance during Rain or Thunderstorm Events.</td>
+                    <td>Plants with this mutation will be dripping with water particles.</td>
+                </tr>
+                <tr>
+                    <td>Chilled</td>
+                    <td>Environmental</td>
+                    <td>+1 Stack</td>
+                    <td>Chance during Frost Events, or from a Polar Bear.</td>
+                    <td>Plants with this mutation will be slightly bluish with frost particles.</td>
+                </tr>
+                <tr>
+                    <td>Frozen</td>
+                    <td>Environmental</td>
+                    <td>+9 Stack</td>
+                    <td>Chance during Frost event on already Wet plants; or from a Polar Bear.</td>
+                    <td>Plants with this mutation will be encased in an ice block.</td>
+                </tr>
+                <tr>
+                    <td>Bloodlit</td>
+                    <td>Environmental</td>
+                    <td>+3 Stack</td>
+                    <td>Chance during Blood Moon event.</td>
+                    <td>Plants with this mutation will be shining and red in colour.</td>
+                </tr>
+                <tr>
+                    <td>Shocked</td>
+                    <td>Environmental</td>
+                    <td>+99 Stack</td>
+                    <td>Plants struck by lightning during Thunderstorm Event.</td>
+                    <td>Plants will be very neon and glow brightly, typically without the classic studded texture.</td>
+                </tr>
+                <tr>
+                    <td>Celestial</td>
+                    <td>Environmental</td>
+                    <td>+119 Stack</td>
+                    <td>Chance during Meteor Shower.</td>
+                    <td>Plants will be slightly discolored and sparkling yellow and purple.</td>
+                </tr>
+                <tr>
+                    <td>Disco</td>
+                    <td>Environmental</td>
+                    <td>+124 Stack</td>
+                    <td>Chance during Disco Event (Admin command).</td>
+                    <td>Plants will be shining and flashing colors (red, pink, yellow, green, blue) constantly.</td>
+                </tr>
+                <tr>
+                    <td>Chocolate</td>
+                    <td>Environmental</td>
+                    <td>+1 Stack</td>
+                    <td>Use Chocolate Sprinkler (Easter 2025 Event).</td>
+                    <td>Plants with this mutation will become brown, the color of chocolate.</td>
+                </tr>
+                <tr>
+                    <td>Moonlit</td>
+                    <td>Environmental</td>
+                    <td>+1 Stack</td>
+                    <td>Chance during Lunar Glow event (hourly).</td>
+                    <td>Plants with this mutation will be shining and purple in colour.</td>
+                </tr>
+                <tr>
+                    <td>Zombified</td>
+                    <td>Environmental</td>
+                    <td>+24 Stack</td>
+                    <td>Chicken Zombie pet (20% chance every 30 mins to mutate a crop).</td>
+                    <td>Plants will have a green fog and drip green liquid.</td>
+                </tr>
+                 <tr>
+                    <td>Plasma</td>
+                    <td>Environmental</td>
+                    <td>N/A (Wiki says x5, first text no stack bonus)</td>
+                    <td>Obtained through the laser admin weather.</td>
+                    <td>Plants with this mutation will be shining a static, pinkish purple color with red flashing glints.</td>
+                </tr>
+                <tr>
+                    <td>Twisted</td>
+                    <td>Environmental</td>
+                    <td>N/A (Wiki says x30, first text no stack bonus)</td>
+                    <td>Obtained through the Tornado Event (possibly unused).</td>
+                    <td>Visual unknown.</td>
+                </tr>
+            </tbody>
+        </table>
+        <p><em>Note: For Plasma and Twisted mutations, the exact stacking bonus within the formula isn't specified in the primary guide. The multipliers listed (x5, x30) might be direct total value multipliers if they don't fit the environmental stack system. This guide prioritizes the formula: Base Value × Growth × (1 + Σ Env. Stacks).</em></p>
+
+
+        <div class="section-title">Examples of Mutation Stacking</div>
+
+        <div class="example-block">
+            <div class="subsection-title">Example 1: Wet Mutation Alone</div>
+            <p>Base Value: 100<br>
+            Growth Mutation: None (×1)<br>
+            Environmental Mutations: Wet (+1)<br>
+            Environmental Multiplier: 1 + 1 = 2<br>
+            <strong>Total Value: 100 × 1 × 2 = 200</strong></p>
+        </div>
+
+        <div class="example-block">
+            <div class="subsection-title">Example 2: Bloodlit Mutation Alone</div>
+            <p>Base Value: 100<br>
+            Growth Mutation: None (×1)<br>
+            Environmental Mutations: Bloodlit (+3)<br>
+            Environmental Multiplier: 1 + 3 = 4<br>
+            <strong>Total Value: 100 × 1 × 4 = 400</strong></p>
+        </div>
+
+        <div class="example-block">
+            <div class="subsection-title">Example 3: Wet and Bloodlit Together</div>
+            <p>Base Value: 100<br>
+            Growth Mutation: None (×1)<br>
+            Environmental Mutations: Wet (+1), Bloodlit (+3)<br>
+            Environmental Stack Bonus: 1 + 3 = 4<br>
+            Environmental Multiplier: 1 + 4 = 5<br>
+            <strong>Total Value: 100 × 1 × 5 = 500</strong><br>
+            <em>(Note: The total environmental multiplier is 1 + (sum of stacks), not by multiplying individual stack effects.)</em></p>
+        </div>
+
+        <div class="example-block">
+            <div class="subsection-title">Example 4: Rainbow with Shocked and Frozen</div>
+            <p>Base Value: 100<br>
+            Growth Mutation: Rainbow (×50)<br>
+            Environmental Mutations: Shocked (+99), Frozen (+9)<br>
+            Environmental Stack Bonus: 99 + 9 = 108<br>
+            Environmental Multiplier: 1 + 108 = 109<br>
+            <strong>Total Value: 100 × 50 × 109 = 545,000</strong></p>
+        </div>
+        
+        <div class="subsection-title">Further Examples (Calculated by Formula)</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Crop Mutation(s)</th>
+                    <th>Calculation based on Formula</th>
+                    <th>Total Multiplier from Base</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Shocked + Frozen</td>
+                    <td>Base × 1 × (1 + 99 + 9)</td>
+                    <td>109x</td>
+                </tr>
+                 <tr>
+                    <td>Golden + Wet</td>
+                    <td>Base × 20 × (1 + 1)</td>
+                    <td>40x</td>
+                </tr>
+                <tr>
+                    <td>Golden + Frozen</td>
+                    <td>Base × 20 × (1 + 9)</td>
+                    <td>200x</td>
+                </tr>
+                <tr>
+                    <td>Golden + Shocked</td>
+                    <td>Base × 20 × (1 + 99)</td>
+                    <td>2,000x</td>
+                </tr>
+                <tr>
+                    <td>Golden + Shocked + Frozen</td>
+                    <td>Base × 20 × (1 + 99 + 9)</td>
+                    <td>2,180x</td>
+                </tr>
+                <tr>
+                    <td>Golden + Shocked + Frozen + Chocolate</td>
+                    <td>Base × 20 × (1 + 99 + 9 + 1)</td>
+                    <td>2,200x</td>
+                </tr>
+                <tr>
+                    <td>Rainbow + Wet</td>
+                    <td>Base × 50 × (1 + 1)</td>
+                    <td>100x</td>
+                </tr>
+                <tr>
+                    <td>Rainbow + Frozen</td>
+                    <td>Base × 50 × (1 + 9)</td>
+                    <td>500x</td>
+                </tr>
+                <tr>
+                    <td>Rainbow + Shocked</td>
+                    <td>Base × 50 × (1 + 99)</td>
+                    <td>5,000x</td>
+                </tr>
+                <tr>
+                    <td>Rainbow + Shocked + Frozen</td>
+                    <td>Base × 50 × (1 + 99 + 9)</td>
+                    <td>5,450x</td>
+                </tr>
+                <tr>
+                    <td>Rainbow + Shocked + Frozen + Chocolate</td>
+                    <td>Base × 50 × (1 + 99 + 9 + 1)</td>
+                    <td>5,500x</td>
+                </tr>
+                 <tr>
+                    <td>Rainbow + Shocked + Frozen + Chocolate + Moonlit</td>
+                    <td>Base × 50 × (1 + 99 + 9 + 1 + 1)</td>
+                    <td>5,550x</td>
+                </tr>
+                <tr>
+                    <td>Rainbow + Shocked + Frozen + Chocolate + Moonlit + Disco + Celestial + Bloodlit + Zombified</td>
+                    <td>Base × 50 × (1 + 99 + 9 + 1 + 1 + 124 + 119 + 3 + 24)</td>
+                    <td>Base × 50 × (1 + 380) = Base × 50 × 381</td>
+                    <td>19,050x</td>
+                </tr>
+            </tbody>
+        </table>
+        <p><em>Note: The "Total Multiplier from Base" column in the table above reflects the result of Growth_Mutation_Multiplier × (1 + Σ Environmental_Stacks). Some example calculations from the wiki text provided previously might have used slightly different base values for mutations (e.g., Golden x25 vs x20). The calculations here strictly follow the formula and values defined at the top of this page.</em></p>
+
+        <div class="section-title">Mutation Calculator</div>
+        <div class="calculator-container" style="background: #fff; border-radius: 16px; padding: 2rem; margin: 2rem 0; box-shadow: 0 4px 16px rgba(0,0,0,0.1);">
+            <div class="calculator-inputs" style="display: grid; gap: 1rem; margin-bottom: 1.5rem;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Base Value:</label>
+                    <input type="number" id="baseValue" style="width: 100%; padding: 0.8rem; border: 2px solid #a5d6a7; border-radius: 8px; font-size: 1rem;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Growth Mutation:</label>
+                    <select id="growthMutation" style="width: 100%; padding: 0.8rem; border: 2px solid #a5d6a7; border-radius: 8px; font-size: 1rem;">
+                        <option value="1">None (×1)</option>
+                        <option value="20">Golden (×20)</option>
+                        <option value="50">Rainbow (×50)</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Environmental Mutations:</label>
+                    <div class="mutation-checkboxes" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.5rem;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" value="1" data-name="Wet"> Wet (+1)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" value="1" data-name="Chilled"> Chilled (+1)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" value="9" data-name="Frozen"> Frozen (+9)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" value="3" data-name="Bloodlit"> Bloodlit (+3)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" value="99" data-name="Shocked"> Shocked (+99)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" value="119" data-name="Celestial"> Celestial (+119)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" value="124" data-name="Disco"> Disco (+124)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" value="1" data-name="Chocolate"> Chocolate (+1)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" value="1" data-name="Moonlit"> Moonlit (+1)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" value="24" data-name="Zombified"> Zombified (+24)
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <button onclick="calculateValue()" style="background: #4CAF50; color: white; border: none; padding: 1rem 2rem; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; width: 100%; transition: background 0.2s;">Calculate Value</button>
+            <div id="result" style="margin-top: 1.5rem; padding: 1rem; background: #e8f5e9; border-radius: 8px; display: none;">
+                <h3 style="margin: 0 0 0.5rem 0; color: #2e7d32;">Result:</h3>
+                <p id="resultText" style="margin: 0; font-size: 1.2rem;"></p>
+            </div>
+        </div>
+
+        <script>
+            function calculateValue() {
+                const baseValue = parseFloat(document.getElementById('baseValue').value) || 0;
+                const growthMultiplier = parseFloat(document.getElementById('growthMutation').value);
+                
+                let environmentalStacks = 0;
+                const checkboxes = document.querySelectorAll('.mutation-checkboxes input[type="checkbox"]:checked');
+                checkboxes.forEach(checkbox => {
+                    environmentalStacks += parseFloat(checkbox.value);
+                });
+
+                const totalValue = baseValue * growthMultiplier * (1 + environmentalStacks);
+                
+                const resultDiv = document.getElementById('result');
+                const resultText = document.getElementById('resultText');
+                
+                resultDiv.style.display = 'block';
+                resultText.textContent = `Total Value: ${formatNumber(totalValue)}`;
+            }
+
+            function formatNumber(num) {
+                if (num >= 1e9) return (num/1e9).toFixed(1) + "B";
+                if (num >= 1e6) return (num/1e6).toFixed(1) + "M";
+                if (num >= 1e3) return (num/1e3).toFixed(1) + "K";
+                return num.toLocaleString();
+            }
+
+            // Prevent conflicting mutations
+            document.querySelectorAll('.mutation-checkboxes input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        // Handle Wet/Chilled/Frozen exclusivity
+                        if (this.dataset.name === 'Wet' || this.dataset.name === 'Chilled' || this.dataset.name === 'Frozen') {
+                            document.querySelectorAll('.mutation-checkboxes input[type="checkbox"][data-name="Wet"], .mutation-checkboxes input[type="checkbox"][data-name="Chilled"], .mutation-checkboxes input[type="checkbox"][data-name="Frozen"]').forEach(cb => {
+                                if (cb !== this) cb.checked = false;
+                            });
+                        }
+                    }
+                });
+            });
+        </script>
+
+        <p style="margin-top: 2rem; text-align: center; font-style: italic;">For more information, you might refer to community resources or the Grow a Garden Wiki for details on mutations.</p>
+    </div>
+</body>
+</html> 

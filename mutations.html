@@ -118,6 +118,69 @@
     <a href="index.html" class="back-btn-mutations">← Back to Home</a>
     <div class="mutations-container">
         <div class="mutations-title">Understanding Mutations</div>
+        
+        <div class="section-title">Mutation Calculator</div>
+        <div class="calculator-container" style="background: #fff; border-radius: 16px; padding: 2rem; margin: 2rem 0; box-shadow: 0 4px 16px rgba(0,0,0,0.1);">
+            <div class="calculator-inputs" style="display: grid; gap: 1rem; margin-bottom: 1.5rem;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Base Value:</label>
+                    <input type="number" id="baseValue" style="width: 100%; padding: 0.8rem; border: 2px solid #a5d6a7; border-radius: 8px; font-size: 1rem;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Growth Mutation:</label>
+                    <select id="growthMutation" style="width: 100%; padding: 0.8rem; border: 2px solid #a5d6a7; border-radius: 8px; font-size: 1rem;">
+                        <option value="1">None (×1)</option>
+                        <option value="20">Golden (×20)</option>
+                        <option value="50">Rainbow (×50)</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Environmental Mutations:</label>
+                    <div class="mutation-checkboxes" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.5rem;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" value="1" data-name="Wet"> Wet (+1)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" value="1" data-name="Chilled"> Chilled (+1)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" value="9" data-name="Frozen"> Frozen (+9)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" value="3" data-name="Bloodlit"> Bloodlit (+3)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" value="99" data-name="Shocked"> Shocked (+99)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" value="119" data-name="Celestial"> Celestial (+119)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" value="124" data-name="Disco"> Disco (+124)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" value="1" data-name="Chocolate"> Chocolate (+1)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" value="1" data-name="Moonlit"> Moonlit (+1)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" value="24" data-name="Zombified"> Zombified (+24)
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <button onclick="calculateValue()" style="background: #4CAF50; color: white; border: none; padding: 1rem 2rem; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; width: 100%; transition: background 0.2s;">Calculate Value</button>
+            <div id="result" style="margin-top: 1.5rem; padding: 1rem; background: #e8f5e9; border-radius: 8px; display: none;">
+                <h3 style="margin: 0 0 0.5rem 0; color: #2e7d32;">Result:</h3>
+                <p id="resultText" style="margin: 0; font-size: 1.2rem;"></p>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin: 1rem 0 2rem 0;">
+            <a href="crops.html" style="display: inline-block; background: #4CAF50; color: white; padding: 0.8rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600; transition: background 0.2s;">View Plant Base Values →</a>
+        </div>
+
         <p>Mutations are unique visual transformations that enhance the value of crops, making them more visually distinctive and lucrative. These changes can be triggered by specific in-game conditions like weather, certain tools, or special seeds.</p>
 
         <div class="section-title">Mutation Classes</div>
@@ -419,107 +482,49 @@
         </table>
         <p><em>Note: The "Total Multiplier from Base" column in the table above reflects the result of Growth_Mutation_Multiplier × (1 + Σ Environmental_Stacks). Some example calculations from the wiki text provided previously might have used slightly different base values for mutations (e.g., Golden x25 vs x20). The calculations here strictly follow the formula and values defined at the top of this page.</em></p>
 
-        <div class="section-title">Mutation Calculator</div>
-        <div class="calculator-container" style="background: #fff; border-radius: 16px; padding: 2rem; margin: 2rem 0; box-shadow: 0 4px 16px rgba(0,0,0,0.1);">
-            <div class="calculator-inputs" style="display: grid; gap: 1rem; margin-bottom: 1.5rem;">
-                <div>
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Base Value:</label>
-                    <input type="number" id="baseValue" style="width: 100%; padding: 0.8rem; border: 2px solid #a5d6a7; border-radius: 8px; font-size: 1rem;">
-                </div>
-                <div>
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Growth Mutation:</label>
-                    <select id="growthMutation" style="width: 100%; padding: 0.8rem; border: 2px solid #a5d6a7; border-radius: 8px; font-size: 1rem;">
-                        <option value="1">None (×1)</option>
-                        <option value="20">Golden (×20)</option>
-                        <option value="50">Rainbow (×50)</option>
-                    </select>
-                </div>
-                <div>
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Environmental Mutations:</label>
-                    <div class="mutation-checkboxes" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.5rem;">
-                        <label style="display: flex; align-items: center; gap: 0.5rem;">
-                            <input type="checkbox" value="1" data-name="Wet"> Wet (+1)
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 0.5rem;">
-                            <input type="checkbox" value="1" data-name="Chilled"> Chilled (+1)
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 0.5rem;">
-                            <input type="checkbox" value="9" data-name="Frozen"> Frozen (+9)
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 0.5rem;">
-                            <input type="checkbox" value="3" data-name="Bloodlit"> Bloodlit (+3)
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 0.5rem;">
-                            <input type="checkbox" value="99" data-name="Shocked"> Shocked (+99)
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 0.5rem;">
-                            <input type="checkbox" value="119" data-name="Celestial"> Celestial (+119)
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 0.5rem;">
-                            <input type="checkbox" value="124" data-name="Disco"> Disco (+124)
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 0.5rem;">
-                            <input type="checkbox" value="1" data-name="Chocolate"> Chocolate (+1)
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 0.5rem;">
-                            <input type="checkbox" value="1" data-name="Moonlit"> Moonlit (+1)
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 0.5rem;">
-                            <input type="checkbox" value="24" data-name="Zombified"> Zombified (+24)
-                        </label>
-                    </div>
-                </div>
-            </div>
-            <button onclick="calculateValue()" style="background: #4CAF50; color: white; border: none; padding: 1rem 2rem; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; width: 100%; transition: background 0.2s;">Calculate Value</button>
-            <div id="result" style="margin-top: 1.5rem; padding: 1rem; background: #e8f5e9; border-radius: 8px; display: none;">
-                <h3 style="margin: 0 0 0.5rem 0; color: #2e7d32;">Result:</h3>
-                <p id="resultText" style="margin: 0; font-size: 1.2rem;"></p>
-            </div>
-        </div>
-
-        <script>
-            function calculateValue() {
-                const baseValue = parseFloat(document.getElementById('baseValue').value) || 0;
-                const growthMultiplier = parseFloat(document.getElementById('growthMutation').value);
-                
-                let environmentalStacks = 0;
-                const checkboxes = document.querySelectorAll('.mutation-checkboxes input[type="checkbox"]:checked');
-                checkboxes.forEach(checkbox => {
-                    environmentalStacks += parseFloat(checkbox.value);
-                });
-
-                const totalValue = baseValue * growthMultiplier * (1 + environmentalStacks);
-                
-                const resultDiv = document.getElementById('result');
-                const resultText = document.getElementById('resultText');
-                
-                resultDiv.style.display = 'block';
-                resultText.textContent = `Total Value: ${formatNumber(totalValue)}`;
-            }
-
-            function formatNumber(num) {
-                if (num >= 1e9) return (num/1e9).toFixed(1) + "B";
-                if (num >= 1e6) return (num/1e6).toFixed(1) + "M";
-                if (num >= 1e3) return (num/1e3).toFixed(1) + "K";
-                return num.toLocaleString();
-            }
-
-            // Prevent conflicting mutations
-            document.querySelectorAll('.mutation-checkboxes input[type="checkbox"]').forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    if (this.checked) {
-                        // Handle Wet/Chilled/Frozen exclusivity
-                        if (this.dataset.name === 'Wet' || this.dataset.name === 'Chilled' || this.dataset.name === 'Frozen') {
-                            document.querySelectorAll('.mutation-checkboxes input[type="checkbox"][data-name="Wet"], .mutation-checkboxes input[type="checkbox"][data-name="Chilled"], .mutation-checkboxes input[type="checkbox"][data-name="Frozen"]').forEach(cb => {
-                                if (cb !== this) cb.checked = false;
-                            });
-                        }
-                    }
-                });
-            });
-        </script>
-
         <p style="margin-top: 2rem; text-align: center; font-style: italic;">For more information, you might refer to community resources or the Grow a Garden Wiki for details on mutations.</p>
     </div>
+
+    <script>
+        function calculateValue() {
+            const baseValue = parseFloat(document.getElementById('baseValue').value) || 0;
+            const growthMultiplier = parseFloat(document.getElementById('growthMutation').value);
+            
+            let environmentalStacks = 0;
+            const checkboxes = document.querySelectorAll('.mutation-checkboxes input[type="checkbox"]:checked');
+            checkboxes.forEach(checkbox => {
+                environmentalStacks += parseFloat(checkbox.value);
+            });
+
+            const totalValue = baseValue * growthMultiplier * (1 + environmentalStacks);
+            
+            const resultDiv = document.getElementById('result');
+            const resultText = document.getElementById('resultText');
+            
+            resultDiv.style.display = 'block';
+            resultText.textContent = `Total Value: ${formatNumber(totalValue)}`;
+        }
+
+        function formatNumber(num) {
+            if (num >= 1e9) return (num/1e9).toFixed(1) + "B";
+            if (num >= 1e6) return (num/1e6).toFixed(1) + "M";
+            if (num >= 1e3) return (num/1e3).toFixed(1) + "K";
+            return num.toLocaleString();
+        }
+
+        // Prevent conflicting mutations
+        document.querySelectorAll('.mutation-checkboxes input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    // Handle Wet/Chilled/Frozen exclusivity
+                    if (this.dataset.name === 'Wet' || this.dataset.name === 'Chilled' || this.dataset.name === 'Frozen') {
+                        document.querySelectorAll('.mutation-checkboxes input[type="checkbox"][data-name="Wet"], .mutation-checkboxes input[type="checkbox"][data-name="Chilled"], .mutation-checkboxes input[type="checkbox"][data-name="Frozen"]').forEach(cb => {
+                            if (cb !== this) cb.checked = false;
+                        });
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html> 
